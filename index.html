@@ -458,6 +458,9 @@ button,a,.opt,.step,.action,.mod,.cchap{touch-action:manipulation}
 .lbar>span{flex:1;min-width:180px;display:flex;flex-direction:column;gap:2px}
 .lbar small{color:var(--mute);font-size:12.5px}.lbar code{font-size:12px}
 .lbar .btn{flex:none}
+.lbtn{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex:none}
+.lpath{font-size:10.5px;color:var(--mute);opacity:.35;cursor:copy;user-select:all;transition:opacity .2s}
+.lpath:hover{opacity:.8}.lpath.cp{opacity:1;color:var(--ok)}
 .lwarn{flex-basis:100%;color:var(--ko);font-size:13px}
 @media (max-width:600px){.show-sm{display:inline}.vplay-body{padding:0 12px 14px}.vgrid{grid-template-columns:1fr 1fr;gap:10px}.vtxt b{font-size:13.5px}.vtxt{padding:8px 10px 10px}.vgroup h3 em{display:none}}
 @media (max-width:360px){.vgrid{grid-template-columns:1fr}}
@@ -709,7 +712,7 @@ function lBar() {
   if (!miss) return '';
   if (LSTATE === 'ok') return `<div class="lbar ok" id="lbar">${ic('check')}<span><b>Vidéos de ce PC reliées</b><small>${miss} vidéos pas encore sur YouTube sont lues depuis ton disque (sur ce PC uniquement)</small></span><button class="btn" onclick="lForget()">Délier</button></div>`;
   if (LSTATE === 'prompt') return `<div class="lbar" id="lbar">${ic('pcircle')}<span><b>${miss} vidéos sur ce PC</b><small>Chrome demande de réautoriser l'accès au dossier vidéos</small></span><button class="btn primary" onclick="lLink()">Réactiver</button></div>`;
-  return `<div class="lbar" id="lbar">${ic('pcircle')}<span><b>${miss} vidéos pas encore sur YouTube</b><small>Sur ce PC, relie le dossier <code>revision-CCA\\videos</code> pour les lire depuis le disque${FSA_REAL ? '' : ' (à refaire à chaque visite dans ce navigateur ; rien n\'est envoyé en ligne)'}</small></span><button class="btn primary" onclick="lLink()">Relier le dossier</button></div>`;
+  return `<div class="lbar" id="lbar">${ic('pcircle')}<span><b>${miss} vidéos pas encore sur YouTube</b><small>Sur ce PC, relie le dossier <code>revision-CCA\\videos</code> pour les lire depuis le disque${FSA_REAL ? '' : ' (à refaire à chaque visite dans ce navigateur ; rien n\'est envoyé en ligne)'}</small></span><span class="lbtn"><button class="btn primary" onclick="lLink()">Relier le dossier</button><code class="lpath" title="Cliquer pour copier" onclick="navigator.clipboard&&navigator.clipboard.writeText(this.textContent);this.classList.add('cp');setTimeout(()=>this.classList.remove('cp'),1200)">C:\\Users\\clari\\revision-CCA\\videos</code></span></div>`;
 }
 // remplace les <video data-lf="fichier"> par la vidéo lue depuis le disque
 let LURLS = [];
