@@ -516,9 +516,7 @@ function home() {
       <div class="stat"><b>${mist}</b><span>erreur${mist > 1 ? 's' : ''} à revoir</span></div>
       <div class="stat"><b>${good}</b><span>maîtrisées</span></div>
     </div></div></header>`;
-  let h = `<div class="actions three">
-    <button class="action train" onclick="trainSetup(false)"><span class="ic amber">${ic('target')}</span><span><b>Entraînement</b><span>${Q.length + nCours} questions · mode révision ou examen</span></span></button>
-    <button class="action" onclick="startQuiz('all')"><span class="ic blue">${ic('shuffle')}</span><span><b>Quiz complet mélangé</b><span>${Q.length} questions, tous modules</span></span></button>
+  let h = `<div class="actions" style="grid-template-columns:1fr">
     <button class="action" onclick="startQuiz('mistakes')" ${mist ? '' : 'disabled'}><span class="ic red">${ic('redo')}</span><span><b>Revoir mes erreurs</b><span>${mist ? mist + ' question' + (mist > 1 ? 's' : '') : 'Aucune pour l\'instant'}</span></span></button>
   </div>
   <div class="section-title"><h3>Modules</h3><a href="#" onclick="settings();return false">${ic('gear')} Paramètres</a></div><div class="grid">`;
