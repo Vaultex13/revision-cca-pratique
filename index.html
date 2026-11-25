@@ -1,0 +1,1040 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Révision CCA PRATIQUE</title>
+<style>
+:root{
+  --bg:#eef2f8;--bg2:#e4eaf4;--card:#ffffff;--ink:#14213a;--mute:#5d6b84;--line:#dbe2ee;
+  --brand:#16305e;--brand2:#2457b8;--accent:#e9a23b;--sky1:#0f2347;--sky2:#24539e;
+  --ok:#17874c;--okbg:#e5f5ec;--ko:#c23a2f;--kobg:#fcebea;--warn:#a5650c;--warnbg:#fff1d9;
+  --shadow:0 1px 2px rgba(16,32,64,.06),0 6px 20px rgba(16,32,64,.07);
+  --radius:16px;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0c121c;--bg2:#121a27;--card:#161f2d;--ink:#e7edf7;--mute:#93a1b8;--line:#263247;
+  --brand:#a9c3ff;--brand2:#5d8ef0;--accent:#f0b75a;--sky1:#0a1630;--sky2:#1b3c78;
+  --ok:#4cc38a;--okbg:#12301f;--ko:#ff7d70;--kobg:#3a1a18;--warn:#f0b75a;--warnbg:#36280f;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+}}
+/* ----- image de fond (paysage = PC, portrait = téléphone) ----- */
+:root{--bg-blur:2px;--veil:rgba(238,242,248,.45);--glass:rgba(255,255,255,.84)}
+@media (prefers-color-scheme:dark){:root{--veil:rgba(8,13,22,.26);--glass:rgba(22,31,45,.8)}}
+#bgimg{position:fixed;inset:0;z-index:-2;background:#0c121c url("media/bg-desktop.png") center/cover no-repeat;filter:blur(var(--bg-blur));transform:scale(1.06)}
+@media (orientation:portrait){#bgimg{background-image:url("media/bg-mobile.png");background-position:center 40%}}
+#veil{position:fixed;inset:0;z-index:-1;background:var(--veil)}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+html{background:var(--bg)}
+.action,.mod,.qcard,body.session #side{background:var(--glass)!important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.topbar{background:linear-gradient(135deg,rgba(15,35,71,.72),rgba(36,83,158,.55))!important;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.hero{background:transparent!important;text-shadow:0 1px 10px rgba(0,0,0,.55)}
+.hero::after{display:none}
+.hero .stat{background:rgba(10,18,32,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.section-title h3{text-shadow:0 1px 8px var(--veil)}
+body{margin:0;background:transparent;color:var(--ink);font:16px/1.55 "Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;min-height:100vh}
+a{color:var(--brand2)}
+button{font:inherit;color:inherit}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ----- bandeau ----- */
+.hero{background:linear-gradient(135deg,var(--sky1),var(--sky2));color:#fff;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-60px;top:-40px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.12),transparent 65%);pointer-events:none}
+.hero-in{max-width:960px;margin:0 auto;padding:22px 16px 26px;position:relative;z-index:1}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.3px;opacity:.95}
+.brand .logo{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.14);display:grid;place-items:center}
+.hero h1{font-size:clamp(22px,4vw,30px);margin:14px 0 4px;line-height:1.2}
+.hero p{margin:0;opacity:.8;font-size:15px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}
+.stat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:10px 12px}
+.stat b{display:block;font-size:22px;line-height:1.1}
+.stat span{font-size:12.5px;opacity:.8}
+@media (max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+/* barre de session */
+.topbar{position:sticky;top:0;z-index:10;background:linear-gradient(135deg,var(--sky1),var(--sky2));color:#fff;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.topbar-in{margin:0;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.topbar h2{font-size:16px;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.back{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.14);border:0;color:#fff;padding:7px 12px;border-radius:10px;cursor:pointer}
+.back:hover{background:rgba(255,255,255,.22)}
+.live{font-size:14px;opacity:.9;white-space:nowrap}
+.progress{height:4px;background:rgba(255,255,255,.18)}
+.progress i{display:block;height:100%;background:var(--accent);transition:width .35s ease}
+
+main{max-width:960px;margin:0 auto;padding:18px 16px 40px}
+main.narrow{max-width:820px}
+
+/* ----- actions ----- */
+.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:-34px;position:relative;z-index:2}
+@media (max-width:700px){.actions{grid-template-columns:1fr}}
+.actions.three{grid-template-columns:repeat(3,1fr)}
+@media (max-width:700px){.actions.three{grid-template-columns:1fr}}
+.action.train{border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
+.actions.pick{grid-template-columns:repeat(2,1fr)}
+/* ----- paramétrage de l'entraînement ----- */
+.setup h3{font-size:15px;margin:18px 0 8px;color:var(--mute);text-transform:uppercase;letter-spacing:.5px}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg label{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:12px;padding:9px 14px;cursor:pointer;background:var(--card);font-weight:600;font-size:14.5px}
+.seg label small{font-weight:500;color:var(--mute)}
+.seg input{accent-color:var(--brand2)}
+.seg label:has(input:checked){border-color:var(--brand2);background:color-mix(in srgb,var(--brand2) 9%,var(--card))}
+.seg label:has(input:disabled){opacity:.45;cursor:default}
+.modebox{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modebox label{display:flex;gap:12px;align-items:flex-start;border:1.5px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;background:var(--card)}
+.modebox label:has(input:checked){border-color:var(--brand2);background:color-mix(in srgb,var(--brand2) 9%,var(--card))}
+.modebox b{display:block;font-size:15.5px}.modebox span{font-size:13.5px;color:var(--mute)}
+.modebox input{margin-top:3px;accent-color:var(--brand2)}
+@media (max-width:600px){.modebox{grid-template-columns:1fr}}
+.setup .total{margin-top:16px;font-size:14px;color:var(--mute);text-align:center}
+.quote{margin:8px 0 0;padding:10px 12px;border-left:4px solid var(--accent);background:var(--bg2);border-radius:10px;font-size:14.5px}
+.quote .src{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--warn);margin-bottom:3px}
+.quote .src svg.i{width:14px;height:14px}
+.quote q{font-style:italic}
+.quote .btn{margin-top:8px;font-size:13px;padding:6px 11px}
+.chip.cours{background:var(--warnbg);color:var(--warn)}
+.quit-ov{position:fixed;inset:0;z-index:60;background:rgba(5,10,20,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:grid;place-items:center;padding:16px;animation:in .15s ease}
+.quit-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;max-width:420px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.quit-card .ic{width:46px;height:46px;border-radius:14px;display:inline-grid;place-items:center}
+.quit-card h3{margin:12px 0 6px;font-size:19px}
+.quit-card p{margin:0 0 18px;color:var(--mute);font-size:14.5px}
+.quit-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.report{text-align:left;margin-top:18px}
+.report details{border:1px solid var(--line);border-radius:14px;margin:8px 0;background:var(--card);overflow:hidden}
+.report summary{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;font-weight:600;list-style:none}
+.report summary::-webkit-details-marker{display:none}
+.report summary .rk{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:none;color:#fff}
+.report summary .rk.ok{background:var(--ok)}.report summary .rk.ko{background:var(--ko)}
+.report summary .rk svg.i{width:15px;height:15px;stroke-width:3}
+.report summary .rt{flex:1;min-width:0}
+.report .rbody{padding:4px 16px 14px;border-top:1px solid var(--line)}
+.report .rbody .q-title{display:none}
+.report .rbody .kicker{justify-content:flex-start}
+.report-bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+.actions.pick .action{padding:22px 20px}
+.actions.pick .action .ic{width:54px;height:54px}
+.actions.pick .action b{font-size:18px}
+.pick-col{display:flex;flex-direction:column;gap:10px}
+/* menu principal : 3 encadrés */
+.menu{display:flex;flex-direction:column;gap:16px;margin-top:-34px;position:relative;z-index:2}
+.mbox{background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:20px;padding:14px 16px 16px;box-shadow:var(--shadow)}
+.mbox h3{display:flex;align-items:center;gap:8px;margin:0 2px 12px;font-size:15px;text-transform:uppercase;letter-spacing:.6px;color:var(--mute)}
+.mbox h3 svg.i{width:18px;height:18px}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mgrid .action{padding:14px 18px;box-shadow:none}
+.mgrid .action .ic{width:44px;height:44px}
+.mgrid .action b{font-size:16px}
+.mgrid .action.wide{grid-column:1/-1;justify-self:center;width:min(480px,100%)}
+@media (max-width:700px){.mgrid{grid-template-columns:1fr}}
+.actions.pick .pick-mid{grid-column:1/-1;justify-self:center;width:min(480px,100%)}
+.actions.pick .action.cours-pick{padding:14px 20px}
+.actions.pick .action.cours-pick .ic{width:44px;height:44px}
+.actions.pick .action.cours-pick b{font-size:16px}
+@media (max-width:700px){.actions.pick{grid-template-columns:1fr}}
+.action{display:flex;gap:12px;align-items:center;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);cursor:pointer;transition:transform .15s,border-color .15s}
+.action:hover:not(:disabled){transform:translateY(-2px);border-color:var(--brand2)}
+.action:disabled{opacity:.55;cursor:default}
+.action .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex:none}
+.action b{display:block;font-size:15px}
+.action span{font-size:13px;color:var(--mute)}
+.ic.blue{background:rgba(36,87,184,.12);color:var(--brand2)}
+.ic.red{background:var(--kobg);color:var(--ko)}
+.ic.amber{background:var(--warnbg);color:var(--warn)}
+
+.section-title{display:flex;align-items:baseline;justify-content:space-between;margin:26px 2px 12px}
+.section-title h3{margin:0;font-size:18px}
+.section-title a{font-size:13px;color:var(--mute)}
+
+/* ----- modules ----- */
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.mod{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;transition:transform .15s,border-color .15s}
+.mod:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--brand2) 45%,var(--line))}
+.mod.prio{border-top:3px solid var(--accent)}
+.mod-head{display:flex;gap:12px;align-items:flex-start}
+.mod-ic{width:44px;height:44px;border-radius:12px;background:rgba(36,87,184,.1);color:var(--brand2);display:grid;place-items:center;flex:none}
+.mod-ic svg.i{width:22px;height:22px}
+.mod-name{font-weight:650;font-size:16px;line-height:1.3}
+.mod-meta{font-size:13px;color:var(--mute)}
+.ring{margin-left:auto;flex:none;position:relative;width:52px;height:52px}
+.ring svg{transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:13px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;padding:2px 9px;border-radius:99px;background:var(--bg2);color:var(--mute);font-weight:600}
+.chip.warn{background:var(--warnbg);color:var(--warn)}
+.chip.ok{background:var(--okbg);color:var(--ok)}
+.chip.ko{background:var(--kobg);color:var(--ko)}
+.mod-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.mod-btns .btn{padding:9px 10px;min-width:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;border-radius:11px;cursor:pointer;font-weight:600;font-size:14.5px;transition:background .15s,border-color .15s,transform .1s}
+.btn:hover:not(:disabled){border-color:var(--brand2)}
+.btn:active:not(:disabled){transform:scale(.98)}
+.btn.primary{background:var(--brand2);border-color:var(--brand2);color:#fff}
+.btn.primary:hover:not(:disabled){filter:brightness(1.08)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.danger{color:var(--ko);border-color:color-mix(in srgb,var(--ko) 45%,var(--line))}
+.btn.danger:hover:not(:disabled){background:var(--kobg);border-color:var(--ko)}
+.set-row{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:10px 0;background:var(--card)}
+@media (max-width:560px){.set-row{flex-wrap:wrap}.set-row .btn{width:100%}}
+.section-title a{display:inline-flex;align-items:center;gap:5px}
+.section-title a svg.i{width:15px;height:15px}
+.yt-box{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:var(--shadow);margin-top:14px}
+.yt-box iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.pdf-box{border-radius:14px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);background:#525659}
+.pdf-box iframe{display:block;width:100%;height:75vh;border:0}
+/* ----- cours (manuel + fiches) ----- */
+.cours-ov{position:fixed;inset:0;z-index:50;background:rgba(5,10,20,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:flex;justify-content:center;padding:16px;animation:in .2s ease}
+.cours-in{background:var(--card);border-radius:18px;width:min(1100px,100%);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.cours-head{display:flex;align-items:center;gap:8px;padding:10px 10px 4px 18px;font-weight:700}
+.cours-t{flex:1;min-width:0;display:flex;gap:8px;align-items:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cours-tabs{display:flex;gap:8px;padding:6px 12px;overflow-x:auto;flex:none}
+.ctab{display:flex;gap:9px;align-items:center;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:7px 13px;cursor:pointer;white-space:nowrap;text-align:left;flex:none}
+.ctab:hover{border-color:color-mix(in srgb,var(--brand2) 60%,var(--line))}
+.ctab b{display:block;font-size:14px}.ctab small{display:block;color:var(--mute);font-size:12px}
+.ctab.on{border-color:var(--brand2);background:color-mix(in srgb,var(--brand2) 9%,var(--card));color:var(--brand2)}
+.cours-pages{display:flex;gap:6px;padding:4px 12px 8px;overflow-x:auto;align-items:center;flex:none}
+.cpg{min-width:36px;height:30px;padding:0 8px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--mute);cursor:pointer;font-weight:650;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:4px;flex:none;text-decoration:none}
+.cpg:hover{border-color:var(--brand2);color:var(--ink)}
+.cpg.on{background:var(--brand2);border-color:var(--brand2);color:#fff}
+.cpg.ext{margin-left:auto;color:var(--brand2);padding:0 10px}
+.cpg svg.i{width:15px;height:15px}
+.cours-cur{padding:0 16px 8px;font-size:13px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:none}
+.cours-pdf{flex:1;width:100%;min-height:0;border:0;background:#525659}
+.cours-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.cours-links .btn{font-size:13.5px;padding:7px 12px}
+.cours-all{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:12px}
+.cours-chaps{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.cchap{display:flex;gap:10px;align-items:center;text-align:left;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:12px;padding:8px 10px;cursor:pointer;color:var(--ink);transition:border-color .15s,transform .15s}
+.cchap:hover{border-color:var(--brand2);transform:translateY(-1px)}
+.cchap .mod-ic{width:34px;height:34px;border-radius:10px}
+.cchap .mod-ic svg.i{width:18px;height:18px}
+.cchap b{display:block;font-size:13.5px;line-height:1.25}
+.cchap small{color:var(--mute);font-size:12px}
+.section-title h3{display:inline-flex;align-items:center;gap:8px}
+@media (max-width:600px){.hide-sm{display:none}}
+body.cours-open{overflow:hidden}
+@media (max-width:600px){.cours-ov{padding:0}.cours-in{border-radius:0}}
+.intro blockquote{margin:12px 0;padding:10px 14px;border-left:4px solid var(--accent);background:var(--bg2);border-radius:10px}
+.btn.grow{flex:1}
+.btn svg.i{width:17px;height:17px}
+
+/* ----- carte question ----- */
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:var(--shadow);animation:in .25s ease}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.kicker{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--mute);margin-bottom:8px}
+.kicker .type{display:inline-flex;align-items:center;gap:5px;font-weight:600;color:var(--brand2)}
+.kicker .type svg.i{width:15px;height:15px}
+.q-title{font-size:clamp(19px,2.8vw,24px);font-weight:700;line-height:1.35;margin:4px 0 16px;text-align:center}
+.kicker{justify-content:center}
+.desc{display:block;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);color:var(--mute);font-size:14px;padding:12px 16px;border-radius:12px;margin-bottom:14px}
+.desc p{margin:0 0 4px}
+.fbcard{border:1px solid var(--line);border-radius:14px;padding:4px 12px 10px;margin-bottom:14px;box-shadow:var(--shadow)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px}
+.cols .col h3{text-align:center;font-size:18px;margin:4px 0 10px;color:var(--mute)}
+.ans-item{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);border-radius:22px;padding:10px 14px;margin:8px 0;font-size:14.5px;background:var(--card)}
+.ans-item.good{border-color:var(--ok);background:var(--okbg)}
+.ans-item.bad{border-color:var(--ko);background:var(--kobg)}
+.ans-item .cb{width:18px;height:18px;border:1.5px solid var(--mute);border-radius:4px;flex:none;margin-top:2px}
+.ans-item .cb.rd{border-radius:50%}
+.ans-item .cb.on{background:var(--brand2);border-color:var(--brand2);box-shadow:inset 0 0 0 3px var(--card)}
+.ans-item .num{min-width:20px;color:var(--mute)}
+@media (max-width:640px){.cols{grid-template-columns:1fr}}
+.outro-stats{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;margin:8px 0}
+.outro-stats>div{display:flex;flex-direction:column;align-items:center;gap:6px}
+.outro-stats span{color:var(--mute);font-size:14px}
+.outro-stats>div>b{font-size:36px;line-height:120px}
+.big-ring{width:120px;height:120px}
+.big-ring b{font-size:26px}
+.topbar .cont{background:#fff;color:var(--sky1)!important;font-weight:700}
+.topbar .cont:hover{background:#e8eefc}
+.topbar h2{font-size:14px;letter-spacing:.3px}
+.hint{font-size:13.5px;color:var(--mute);margin:-4px 0 10px}
+.opt{display:flex;gap:12px;align-items:center;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;margin:9px 0;cursor:pointer;transition:border-color .15s,background .15s,transform .1s;background:var(--card)}
+.opt:hover{border-color:color-mix(in srgb,var(--brand2) 60%,var(--line))}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt .letter{width:30px;height:30px;border-radius:9px;border:1.5px solid var(--line);display:grid;place-items:center;font-weight:700;font-size:14px;color:var(--mute);flex:none;transition:all .15s}
+.opt.multi .letter{border-radius:7px}
+.opt.sel{border-color:var(--brand2);background:color-mix(in srgb,var(--brand2) 7%,var(--card))}
+.opt.sel .letter{background:var(--brand2);border-color:var(--brand2);color:#fff}
+.opt.good{border-color:var(--ok);background:var(--okbg)}
+.opt.good .letter{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.bad{border-color:var(--ko);background:var(--kobg)}
+.opt.bad .letter{background:var(--ko);border-color:var(--ko);color:#fff}
+.opt.miss{border-color:var(--ok);border-style:dashed}
+.opt.miss .letter{border-color:var(--ok);color:var(--ok)}
+.opt.locked{cursor:default}
+.tf{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tf .opt{justify-content:center;font-weight:650;padding:16px}
+
+.feedback{display:flex;align-items:center;gap:10px;border-radius:14px;padding:12px 14px;margin-top:16px;font-weight:700;animation:in .2s ease}
+.feedback.ok{background:var(--okbg);color:var(--ok)}
+.feedback.ko{background:var(--kobg);color:var(--ko)}
+.expl{margin-top:10px;padding:12px 14px;border-left:4px solid var(--brand2);background:var(--bg2);border-radius:10px;font-size:15px}
+.expl strong.h{display:flex;align-items:center;gap:6px;color:var(--brand2);margin-bottom:4px}
+.expl p{margin:4px 0}
+.expl img,.intro img{max-width:100%;height:auto;border-radius:12px;margin-top:6px}
+
+.match-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;padding:10px 12px;border:1.5px solid var(--line);border-radius:14px;margin:8px 0}
+.match-row .l{font-weight:600}
+.match-row select{font:inherit;padding:9px 10px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);width:100%;cursor:pointer}
+.match-row.good{border-color:var(--ok);background:var(--okbg)}
+.match-row.bad{border-color:var(--ko);background:var(--kobg)}
+.fix{font-size:13.5px;color:var(--ok);font-weight:600;grid-column:2}
+@media (max-width:560px){.match-row{grid-template-columns:1fr}.fix{grid-column:1}}
+
+.order-item{display:flex;gap:10px;align-items:center;border:1.5px solid var(--line);border-radius:14px;padding:9px 10px 9px 12px;margin:8px 0;background:var(--card);transition:transform .15s}
+.order-item .n{width:28px;height:28px;border-radius:8px;background:var(--bg2);display:grid;place-items:center;font-weight:700;color:var(--mute);flex:none;font-size:14px}
+.order-item .t{flex:1}
+.order-item .mv{border:1px solid var(--line);background:var(--card);border-radius:9px;width:34px;height:34px;display:grid;place-items:center;cursor:pointer}
+.order-item .mv:disabled{opacity:.3;cursor:default}
+.order-item.good{border-color:var(--ok);background:var(--okbg)}
+.order-item.good .n{background:var(--ok);color:#fff}
+.order-item.bad{border-color:var(--ko);background:var(--kobg)}
+.order-item.bad .n{background:var(--ko);color:#fff}
+
+.hs-wrap{display:grid;grid-template-columns:1fr;gap:12px}
+.hs-list{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:6px}
+.hs-list li{padding:4px 10px;border-radius:99px;background:var(--bg2);font-size:13.5px;font-weight:600;color:var(--mute)}
+.hs-list li.cur{background:var(--brand2);color:#fff}
+.hs-list li.done{opacity:.6}
+.hs-list li.good{background:var(--okbg);color:var(--ok)}
+.hs-list li.bad{background:var(--kobg);color:var(--ko)}
+.hs{position:relative;display:table;margin:0 auto;user-select:none;border-radius:14px;overflow:hidden;background:var(--bg2)}
+.hs img{display:block;max-width:100%;max-height:72vh;width:auto;height:auto;cursor:crosshair}
+.hs .z{position:absolute;border:2px solid var(--ok);background:rgba(23,135,76,.2);border-radius:8px;font-size:12px;font-weight:700;color:#fff;text-shadow:0 0 3px #000;padding:2px 4px;pointer-events:none}
+.hs .pin{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:var(--brand2);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center;pointer-events:none;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.hs .pin.bad{background:var(--ko)}.hs .pin.good{background:var(--ok)}
+
+.video-box{border-radius:16px;overflow:hidden;background:#000;box-shadow:var(--shadow)}
+video{display:block;width:100%;max-height:70vh;background:#000}
+.file{font-size:12.5px;color:var(--mute);margin-top:8px}
+.intro{font-size:16px}
+.intro ul{padding-left:20px}
+
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:20px}
+
+/* ----- résultat ----- */
+.result{text-align:center;padding:30px 22px}
+.big-ring{width:150px;height:150px;margin:8px auto 6px;position:relative}
+.big-ring svg{transform:rotate(-90deg)}
+.big-ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:36px}
+.result p{color:var(--mute);margin:4px 0 18px}
+.result .btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.foot{text-align:center;font-size:12.5px;color:var(--mute);margin-top:30px}
+
+/* ----- menu latéral (comme Aeroschool) ----- */
+.layout{display:flex;align-items:flex-start}
+.layout>main{flex:1;min-width:0}
+#side{display:none}
+body.session #side{display:block;position:sticky;top:var(--topbar-h,58px);height:calc(100vh - var(--topbar-h,58px));width:290px;flex:none;background:var(--card);border-right:1px solid var(--line);overflow-y:auto;transition:margin-left .25s ease}
+body.session.side-closed #side{margin-left:-290px}
+.side-head{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 6px 18px;font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--mute)}
+.side-x{border:0;background:transparent;color:var(--mute);width:32px;height:32px;border-radius:8px;display:grid;place-items:center;cursor:pointer}
+.side-x:hover{background:var(--bg2);color:var(--ink)}
+.steps{list-style:none;margin:0;padding:4px 10px 24px 10px;position:relative}
+.steps::before{content:"";position:absolute;left:25px;top:18px;bottom:40px;width:2px;background:var(--line)}
+.step{position:relative;display:flex;align-items:center;gap:10px;padding:7px 8px 7px 6px;border-radius:10px;cursor:pointer;color:var(--mute);font-size:14px;line-height:1.3}
+.step:hover{background:var(--bg2);color:var(--ink)}
+.step .dot{width:20px;height:20px;border-radius:50%;background:var(--card);border:2px solid var(--line);display:grid;place-items:center;flex:none;position:relative;z-index:1}
+.step .dot svg.i{width:12px;height:12px;stroke-width:3}
+.step .sic svg.i{width:17px;height:17px}
+.step .lbl{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.step.cur{background:color-mix(in srgb,var(--brand2) 10%,var(--card));color:var(--ink);font-weight:700}
+.step.cur .dot{border-color:var(--brand2);background:var(--brand2)}
+.step.seen .dot{border-color:var(--brand2)}
+.step.ok .dot{background:var(--ok);border-color:var(--ok);color:#fff}
+.step.ko .dot{background:var(--ko);border-color:var(--ko);color:#fff}
+.menu-btn{display:none}
+body.session .menu-btn{display:inline-flex}
+@media (max-width:900px){
+  body.session #side{position:fixed;left:0;z-index:20;box-shadow:4px 0 24px rgba(0,0,0,.25)}
+  body.session:not(.side-closed)::after{content:"";position:fixed;inset:var(--topbar-h,58px) 0 0 0;background:rgba(0,0,0,.35);z-index:15}
+}
+</style>
+</head>
+<body>
+<div id="bgimg" aria-hidden="true"></div><div id="veil" aria-hidden="true"></div>
+<div id="bar"></div>
+<div class="layout"><aside id="side" aria-label="Étapes"></aside><main id="app"></main></div>
+<!-- ?v= : force le navigateur à recharger les données après une mise à jour -->
+<script src="modules.js?v=20261124e"></script>
+<script src="modules-secourisme.js?v=20261124e"></script>
+<script src="cours.js?v=20261124k"></script>
+<script src="questions-cours.js?v=20261124j"></script>
+<script>
+// ---------- formations (choix à l'entrée du site) ----------
+const FORMATIONS = {
+  securite: { label:'Sécurité', code:'SCU', icon:'shield', data:window.MODULES,
+    icons:{5681:'vest',5682:'seat',5683:'door',5684:'radio',5685:'rocket',5686:'anchor',5687:'wind',5688:'flame',5689:'axe',5690:'mega',5691:'bell',5692:'award'} },
+  secourisme: { label:'Secourisme', code:'SCO', icon:'cross', data:window.MODULES_SECOURISME,
+    icons:{5021:'pulse',5022:'heart',5023:'cross',5024:'bone',5025:'award'} },
+};
+// « Générale » : les deux formations réunies (entraînement général) ; pas de colonne à elle sur le premier écran
+if (window.MODULES && window.MODULES_SECOURISME) FORMATIONS.general = { label:'Générale', code:'SCU + SCO', icon:'target', hidden:true,
+  data:{ modules:[...window.MODULES.modules, ...window.MODULES_SECOURISME.modules] },
+  icons:{ ...FORMATIONS.securite.icons, ...FORMATIONS.secourisme.icons } };
+let FK = null, F = null, DATA = null, MOD_IC = {};
+function setFormation(k) {
+  FK = k; F = k && FORMATIONS[k];
+  DATA = F ? F.data : null; MOD_IC = F ? F.icons : {};
+  if (location.hash !== '#' + (k || '')) history.replaceState(null, '', k ? '#' + k : location.pathname);
+}
+const app = document.getElementById('app'), bar = document.getElementById('bar'), side = document.getElementById('side');
+const QTYPES = ['mcq','truefalse','match','order','hotspot'];
+const isQ = s => QTYPES.includes(s.type);
+const allQ = () => DATA.modules.flatMap(m => m.steps.filter(isQ).map(s => ({...s, mod:m.id})));
+// questions rédigées à partir du manuel (questions-cours.js), chacune avec sa citation vérifiée (cref)
+const coursQ = () => { const C = window.QUESTIONS_COURS || {}; return (FK === 'general' ? [...(C.securite || []), ...(C.secourisme || [])] : C[FK] || []).map(q => ({...q})); };
+const everyQ = () => [...allQ(), ...coursQ()];
+const mod = id => DATA.modules.find(m => m.id == id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+// ---------- icônes (traits simples) ----------
+const P = {
+  plane:'<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
+  vest:'<path d="M8 3h8l1 4 3 2v11a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1V9l3-2z"/><path d="M8 3c0 2 1.8 4 4 4s4-2 4-4"/>',
+  seat:'<path d="M7 3v9a3 3 0 0 0 3 3h7"/><path d="M7 21v-3"/><path d="M17 21v-6"/><path d="M5 12h6"/>',
+  door:'<path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.6v16.1a.3.3 0 0 1-.4.3L5 19V5.6a2 2 0 0 1 1.5-1.9l4-1A2 2 0 0 1 13 4.6z"/>',
+  radio:'<path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/>',
+  rocket:'<path d="M4.5 16.5c-1.5 1.3-2 5-2 5s3.7-.5 5-2c.7-.8.7-2.1-.1-2.9a2.2 2.2 0 0 0-2.9-.1z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.9A12.9 12.9 0 0 1 22 2c0 2.7-.8 7.5-6 11a22.4 22.4 0 0 1-4 2z"/><path d="M9 12H4s.6-3 2-4c1.6-1.1 5 0 5 0"/><path d="M12 15v5s3-.6 4-2c1.1-1.6 0-5 0-5"/>',
+  anchor:'<circle cx="12" cy="5" r="3"/><path d="M12 22V8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/>',
+  wind:'<path d="M12.8 19.6A2 2 0 1 0 14 16H2"/><path d="M17.5 8a2.5 2.5 0 1 1 2 4H2"/><path d="M9.8 4.4A2 2 0 1 1 11 8H2"/>',
+  flame:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2.1-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.3 1-3.3.3 1.5 1.4 2.8 2.5 2.8z"/>',
+  axe:'<path d="m14 12-8.5 8.5a2.1 2.1 0 1 1-3-3L11 9"/><path d="M15 13 9 7l4-4 6 6h3a8 8 0 0 1-7 7z"/>',
+  mega:'<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
+  award:'<circle cx="12" cy="8" r="6"/><path d="M15.5 12.9 17 22l-5-3-5 3 1.5-9.1"/>',
+  shuffle:'<path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="m18 2 4 4-4 4"/><path d="M2 6h1.9c1.5 0 2.9.9 3.6 2.2"/><path d="M22 18h-5.9c-1.3 0-2.6-.7-3.3-1.8l-.5-.8"/><path d="m18 14 4 4-4 4"/>',
+  redo:'<path d="M3 12a9 9 0 1 0 9-9 9.8 9.8 0 0 0-6.7 2.7L3 8"/><path d="M3 3v5h5"/>',
+  flag:'<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/>',
+  back:'<path d="m15 18-6-6 6-6"/>',
+  next:'<path d="m9 18 6-6-6-6"/>',
+  up:'<path d="m18 15-6-6-6 6"/>', down:'<path d="m6 9 6 6 6-6"/>',
+  play:'<polygon points="6 3 20 12 6 21 6 3"/>',
+  book:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>', x:'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  bulb:'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>',
+  list:'<path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/>',
+  link:'<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
+  target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  help:'<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+};
+// icônes du menu identiques à celles du site (Material : checklist, linear_scale, reorder, format_shapes)
+P.checklist = '<path d="M11 6h10"/><path d="M11 12h10"/><path d="M11 18h10"/><path d="m3 6 1.5 1.5L7 5"/><path d="m3 12 1.5 1.5L7 11"/><path d="m3.5 17 3 3"/><path d="m6.5 17-3 3"/>';
+P.dots = '<circle cx="4" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="20" cy="12" r="2"/><path d="M6 12h4"/><path d="M14 12h4"/>';
+P.reorder = '<path d="M3 6h18"/><path d="M3 10h18"/><path d="M3 14h18"/><path d="M3 18h18"/>';
+P.shapes = '<rect x="5" y="5" width="14" height="14"/><rect x="2" y="2" width="4" height="4"/><rect x="18" y="2" width="4" height="4"/><rect x="2" y="18" width="4" height="4"/><rect x="18" y="18" width="4" height="4"/><path d="M9 15l3-7 3 7"/><path d="M10 13h4"/>';
+P.menu ='<path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/>';
+P.pcircle = '<circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/>';
+P.shield = '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>';
+P.cross = '<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>';
+P.heart = '<path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7z"/>';
+P.pulse = '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>';
+P.bone = '<path d="M17 10c.7.7 1.7.7 2.5 0a2.5 2.5 0 1 0-3.5-3.5 2.5 2.5 0 1 0-3.5-3.5c-.7.8-.7 1.8 0 2.5L7 11c-.7-.7-1.7-.7-2.5 0a2.5 2.5 0 1 0 3.5 3.5 2.5 2.5 0 1 0 3.5 3.5c.7-.8.7-1.8 0-2.5z"/>';
+P.doc = '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h8"/>';
+P.gear = '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>';
+P.trash = '<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>';
+P.ext = '<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>';
+const ic = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${P[n] || ''}</svg>`;
+const TYPE_LABEL = { mcq:['checklist','QCM'], truefalse:['help','Vrai ou faux'], match:['dots','À relier'], order:['reorder','Remettre dans l\'ordre'], hotspot:['shapes','Repérer sur l\'image'] };
+function ring(pct, size, stroke, color) {
+  const r = (size - stroke) / 2, c = 2 * Math.PI * r, off = c * (1 - (pct || 0) / 100);
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--line)" stroke-width="${stroke}"/>
+    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}" style="transition:stroke-dashoffset .6s ease"/></svg>`;
+}
+const pctColor = p => p == null ? 'var(--line)' : p >= 90 ? 'var(--ok)' : p >= 70 ? 'var(--accent)' : 'var(--ko)';
+
+// ---------- stockage (localStorage, protégé) ----------
+const KEY = 'cca-revision-v1';
+let store = { q:{}, runs:{} };
+try { store = JSON.parse(localStorage.getItem(KEY)) || store; } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} };
+function record(sid, ok) {
+  const r = store.q[sid] || { ok:0, ko:0, last:null };
+  ok ? r.ok++ : r.ko++; r.last = ok; store.q[sid] = r; save();
+}
+const isMistake = sid => store.q[sid] && store.q[sid].last === false;
+
+// ---------- écran d'entrée : choix de la formation ----------
+function chooser() {
+  S = null; setFormation(null);
+  app.className = '';
+  document.body.classList.remove('session');
+  side.innerHTML = '';
+  bar.innerHTML = `<header class="hero"><div class="hero-in">
+    <div class="brand"><span class="logo">${ic('plane')}</span>CCA · Pratique</div>
+    <h1>Que veux-tu réviser ?</h1>
+    <p>Choisis une formation</p></div></header>`;
+  // menu principal en 3 encadrés : Modules / Cours / Entraînement (colonne gauche = sécurité, droite = secourisme)
+  const G = FORMATIONS.general, nG = G ? G.data.modules.reduce((a, m) => a + m.steps.filter(isQ).length, 0) + Object.values(window.QUESTIONS_COURS || {}).reduce((a, l) => a + l.length, 0) : 0;
+  const forms = Object.entries(FORMATIONS).filter(([, f]) => !f.hidden);
+  const card = (onclick, icCls, icn, title, sub, extra = '') => `<button class="action cours-pick ${extra}" onclick="${onclick}"><span class="ic ${icCls}">${ic(icn)}</span><span><b>${title}</b><span>${sub}</span></span></button>`;
+  const modules = forms.map(([k, f]) => {
+    const d = f.data, qs = d ? d.modules.flatMap(m => m.steps.filter(isQ)) : [];
+    const good = qs.filter(q => store.q[q.sid]?.last).length;
+    const sub = d ? `${d.modules.filter(m => !m.assessment).length} modules · ${qs.length} questions${good ? ` · ${good} maîtrisées` : ''}` : 'Contenu pas encore importé';
+    return d ? card(`openFormation('${k}')`, k === 'securite' ? 'blue' : 'red', f.icon, `Module ${f.label}`, sub) : '';
+  }).join('');
+  const cours = forms.map(([k, f]) => {
+    // cours de la formation = partie du manuel rattachée au test final
+    const all = f.data && f.data.modules.find(m => m.assessment && hasCours(m.id));
+    const man = all && COURS.mods[all.id].map(x => COURS.docs[x]).find(x => x.kind === 'manuel');
+    return man ? card(`openCours(${all.id},null,null,'Cours ${f.label} · Manuel',['manuel'])`, 'blue', 'book', `Cours ${f.label}`, `Manuel CCA pratique · ${docRange(man)}`) : '';
+  }).join('') + [[1, 'recap', 'Fiches récap secourisme', 'Les fiches de l\'école, un geste par fiche', 'red'], [2, 'fiche', 'Fiches de révision Enzo', 'Fiches 0 à 17 · sécurité et secourisme', 'amber']]
+    .filter(([id]) => hasCours(id)).map(([id, kind, t, s, col]) => card(`openCours(${id},null,null,'${t.replace(/'/g, "\\'")}')`, col, KIND_IC[kind], t, `${s} · ${COURS.docs[COURS.mods[id][0]].pages.length} pages`)).join('');
+  const train = forms.map(([k, f]) => {
+    const d = f.data, n = d ? d.modules.reduce((a, m) => a + m.steps.filter(isQ).length, 0) + ((window.QUESTIONS_COURS || {})[k] || []).length : 0;
+    return d ? card(`openFormation('${k}');trainSetup(true)`, 'amber', 'target', `Entraînement ${f.label}`, `${n} questions · mode révision ou examen`, 'train') : '';
+  }).join('') + (G ? card(`openFormation('general');trainSetup(true)`, 'amber', 'target', 'Entraînement général', `Sécurité + secourisme · ${nG} questions · mode révision ou examen`, 'train wide') : '');
+  const box = (icn, title, inner) => `<section class="mbox"><h3>${ic(icn)}${title}</h3><div class="mgrid">${inner}</div></section>`;
+  app.innerHTML = `<div class="menu">${box('shield', 'Modules', modules)}${box('book', 'Cours', cours)}${box('target', 'Entraînement', train)}</div>
+    <div class="foot">Usage personnel · contenu Aeroschool · progression enregistrée dans ce navigateur</div>`;
+  scrollTo(0, 0);
+}
+function openFormation(k) { setFormation(k); home(); }
+
+// ---------- accueil d'une formation ----------
+function home() {
+  if (!F || !DATA) return chooser();
+  S = null;
+  app.className = '';
+  document.body.classList.remove('session');
+  side.innerHTML = '';
+  const Q = allQ();
+  const seen = Q.filter(q => store.q[q.sid]).length, good = Q.filter(q => store.q[q.sid]?.last).length;
+  const mist = everyQ().filter(q => isMistake(q.sid)).length, nCours = coursQ().length;
+  const vids = DATA.modules.reduce((a, m) => a + m.steps.filter(s => s.type === 'video').length, 0);
+  bar.innerHTML = `<header class="hero"><div class="hero-in">
+    <div class="brand"><span class="logo">${ic(F.icon)}</span>CCA · Pratique ${F.label}
+      <button class="back" style="margin-left:auto;font-weight:600" onclick="chooser()">${ic('back')}Changer de module</button></div>
+    <h1>Révision des modules ${F.code}</h1>
+    <p>${(() => { const na = DATA.modules.filter(m => m.assessment).length; return `${DATA.modules.length - na} modules${na ? ' + test final' : ''}`; })()} · ${Q.length} questions · ${vids} vidéos</p>
+    <div class="stats">
+      <div class="stat"><b>${seen}/${Q.length}</b><span>questions vues</span></div>
+      <div class="stat"><b>${seen ? Math.round(good / seen * 100) + ' %' : '–'}</b><span>de réussite</span></div>
+      <div class="stat"><b>${mist}</b><span>erreur${mist > 1 ? 's' : ''} à revoir</span></div>
+      <div class="stat"><b>${good}</b><span>maîtrisées</span></div>
+    </div></div></header>`;
+  let h = `<div class="actions three">
+    <button class="action train" onclick="trainSetup(false)"><span class="ic amber">${ic('target')}</span><span><b>Entraînement</b><span>${Q.length + nCours} questions · mode révision ou examen</span></span></button>
+    <button class="action" onclick="startQuiz('all')"><span class="ic blue">${ic('shuffle')}</span><span><b>Quiz complet mélangé</b><span>${Q.length} questions, tous modules</span></span></button>
+    <button class="action" onclick="startQuiz('mistakes')" ${mist ? '' : 'disabled'}><span class="ic red">${ic('redo')}</span><span><b>Revoir mes erreurs</b><span>${mist ? mist + ' question' + (mist > 1 ? 's' : '') : 'Aucune pour l\'instant'}</span></span></button>
+  </div>
+  ${coursSection()}
+  <div class="section-title"><h3>Modules</h3><a href="#" onclick="settings();return false">${ic('gear')} Paramètres</a></div><div class="grid">`;
+  for (const m of DATA.modules) {
+    const qs = m.steps.filter(isQ), nv = m.steps.filter(s => s.type === 'video').length;
+    const g = qs.filter(q => store.q[q.sid]?.last).length, sn = qs.filter(q => store.q[q.sid]).length;
+    const pct = sn ? Math.round(g / qs.length * 100) : null;
+    const best = store.runs[m.id], errs = qs.filter(q => isMistake(q.sid)).length;
+    h += `<div class="mod">
+      <div class="mod-head"><span class="mod-ic">${ic(MOD_IC[m.id] || 'book')}</span>
+        <div><div class="mod-name">${esc(m.name)}</div><div class="mod-meta">${qs.length} questions${nv ? ` · ${nv} vidéo${nv > 1 ? 's' : ''}` : ''}</div></div>
+        <div class="ring" title="Justes à la dernière tentative">${ring(pct, 52, 5, pctColor(pct))}<b>${pct == null ? '–' : pct + '%'}</b></div></div>
+      <div class="chips">${best != null ? `<span class="chip ${best >= 90 ? 'ok' : ''}">Mon meilleur : ${best} %</span>` : ''}
+        ${errs ? `<span class="chip ko">${errs} erreur${errs > 1 ? 's' : ''}</span>` : ''}${m.assessment ? '<span class="chip">90 % requis</span>' : ''}</div>
+      <div class="mod-btns">${hasCours(m.id) ? `<button class="btn grow" title="Manuel et fiches de ce module" onclick="openCours(${m.id})">${ic('book')}Cours</button>` : ''}
+        ${m.assessment ? '' : `<button class="btn grow" title="Intro, vidéos et questions dans l'ordre du site" onclick="startCourse(${m.id})">${ic('list')}Étapes</button>`}
+        <button class="btn primary grow" onclick="startQuiz(${m.id})">${ic('play')}Quiz</button>
+        ${errs ? `<button class="btn" title="Refaire mes erreurs" onclick="startQuiz(${m.id},true)">${ic('redo')}</button>` : ''}</div></div>`;
+  }
+  app.innerHTML = h + `</div><div class="foot">Usage personnel · contenu Aeroschool · progression enregistrée dans ce navigateur</div>`;
+  scrollTo(0, 0);
+}
+// ---------- cours : manuel, fiches récap, fiches de révision (cours.js) ----------
+const COURS = window.COURS || null;
+const hasCours = id => !!(COURS && COURS.mods[id] && COURS.mods[id].length);
+let CV = null; // { mod, doc, page } : panneau ouvert
+const KIND_IC = { manuel:'book', recap:'doc', fiche:'list' };
+function docName(d) {
+  if (d.kind === 'manuel') return 'Manuel';
+  if (d.kind === 'recap') return 'Fiches récap';
+  const n = [...new Set(d.labels.map(l => (/^Fiche (\d+)/.exec(l) || [])[1]).filter(Boolean))];
+  return n.length > 1 ? `Mes fiches ${n[0]} à ${n[n.length - 1]}` : n.length ? `Ma fiche ${n[0]}` : 'Mes fiches';
+}
+const pnum = (d, p) => String(d.printed[d.pages.indexOf(p)]);
+const pshort = s => s.replace(' (2ᵉ série)', ' bis');
+function docRange(d) { const a = pshort(String(d.printed[0])), b = pshort(String(d.printed[d.printed.length - 1])); return a === b ? `p. ${a}` : `p. ${a} à ${b}`; }
+// kinds : limiter les onglets (ex. ['manuel'] pour « Cours Sécurité » du premier écran)
+function openCours(modId, docKey, page, title, kinds) {
+  if (!hasCours(modId)) return;
+  const same = CV && CV.mod === modId;
+  kinds = kinds || (same && CV.kinds) || null;
+  const keys = COURS.mods[modId].filter(k => !kinds || kinds.includes(COURS.docs[k].kind));
+  if (!keys.includes(docKey)) docKey = keys[0];
+  const d = COURS.docs[docKey];
+  if (!d.pages.includes(page)) page = d.pages[0];
+  title = title || (same && CV.title) || 'Cours · ' + mod(modId).name;
+  CV = { mod: modId, doc: docKey, page, title, kinds };
+  let ov = document.getElementById('cours');
+  if (!ov) { ov = document.createElement('div'); ov.id = 'cours'; ov.className = 'cours-ov'; ov.onclick = e => { if (e.target === ov) closeCours(); }; document.body.appendChild(ov); }
+  const src = `media/${encodeURIComponent(d.file)}#page=${page}`;
+  ov.innerHTML = `<div class="cours-in" role="dialog" aria-label="Cours">
+    <div class="cours-head"><span class="cours-t">${ic('book')}${esc(title)}</span>
+      <button class="side-x" onclick="closeCours()" aria-label="Fermer le cours">${ic('x')}</button></div>
+    <div class="cours-tabs">${keys.map(k => { const x = COURS.docs[k]; return `<button class="ctab ${k === docKey ? 'on' : ''}" onclick="openCours(${modId},'${k}')">${ic(KIND_IC[x.kind])}<span><b>${esc(docName(x))}</b><small>${docRange(x)}</small></span></button>`; }).join('')}</div>
+    <div class="cours-pages">${d.pages.map((p, i) => `<button class="cpg ${p === page ? 'on' : ''}" title="${esc(d.labels[i] || '')}" onclick="openCours(${modId},'${docKey}',${p})">${esc(pshort(String(d.printed[i])))}</button>`).join('')}
+      <a class="cpg ext" href="${src}" target="_blank" title="Ouvrir le PDF dans un nouvel onglet">${ic('ext')}Plein écran</a></div>
+    <div class="cours-cur">${d.kind === 'manuel' ? 'Manuel' : docName(d)} · p. ${esc(pshort(pnum(d, page)))}${d.labels[d.pages.indexOf(page)] ? ' · ' + esc(d.labels[d.pages.indexOf(page)]) : ''}</div>
+    <iframe class="cours-pdf" src="${src}&view=FitH" title="${esc(docName(d))}"></iframe></div>`;
+  document.body.classList.add('cours-open');
+}
+// rubrique « Cours » de l'accueil : tout le cours (docs du test final) + un accès par chapitre
+function coursSection() {
+  const ms = DATA.modules.filter(m => hasCours(m.id));
+  if (!ms.length) return '';
+  const all = ms.find(m => m.assessment), chap = ms.filter(m => !m.assessment);
+  const docs = all ? COURS.mods[all.id].map(k => COURS.docs[k]) : [];
+  return `<div class="section-title"><h3>${ic('book')} Cours et fiches</h3></div>
+    <div class="cours-home">
+      ${all ? `<div class="cours-all">${COURS.mods[all.id].map(k => { const d = COURS.docs[k]; return `<button class="action" onclick="openCours(${all.id},'${k}',null,'Tout le cours ${F.label}')">
+        <span class="ic ${d.kind === 'manuel' ? 'blue' : d.kind === 'recap' ? 'red' : 'amber'}">${ic(KIND_IC[d.kind])}</span>
+        <span><b>${d.kind === 'manuel' ? `Manuel · partie ${F.label}` : d.kind === 'recap' ? 'Fiches récap secourisme' : 'Fiches de révision Enzo'}</b><span>${docRange(d)} · ${d.pages.length} pages</span></span></button>`; }).join('')}</div>` : ''}
+      <div class="cours-chaps">${chap.map(m => `<button class="cchap" onclick="openCours(${m.id})"><span class="mod-ic">${ic(MOD_IC[m.id] || 'book')}</span><span><b>${esc(m.name)}</b><small>${docRange(COURS.docs[COURS.mods[m.id][0]])}</small></span></button>`).join('')}</div>
+    </div>`;
+}
+function closeCours() { const ov = document.getElementById('cours'); if (ov) ov.remove(); CV = null; document.body.classList.remove('cours-open'); }
+// renvois d'une étape vers le cours : manuel en premier, puis fiche récap, puis ma fiche
+function coursRefs(step, modId) {
+  const refs = COURS && COURS.q[step.sid];
+  if (!refs || !hasCours(modId)) return '';
+  const order = { manuel:0, recap:1, fiche:2 };
+  return `<div class="cours-links">${refs.filter(r => COURS.mods[modId].includes(r.doc)).sort((a, b) => order[COURS.docs[a.doc].kind] - order[COURS.docs[b.doc].kind]).map((r, i) => {
+    const d = COURS.docs[r.doc], p = pshort(pnum(d, r.page));
+    // n° de ma fiche : dernière page « Fiche N » avant (ou sur) la page visée
+    const fno = d.kind === 'fiche' ? d.labels.slice(0, d.pages.indexOf(r.page) + 1).map(l => (/^Fiche (\d+)/.exec(l) || [])[1]).filter(Boolean).pop() : null;
+    const label = d.kind === 'manuel' ? `Revoir dans le cours (manuel p. ${p})` : d.kind === 'recap' ? `Fiche récap p. ${p}` : fno ? `Ma fiche ${fno}` : `Mes fiches p. ${p}`;
+    return `<button class="btn ${i ? '' : 'primary'}" onclick="openCours(${modId},'${r.doc}',${r.page})">${ic(KIND_IC[d.kind])}${label}</button>`;
+  }).join('')}</div>`;
+}
+
+// renvoi obligatoire au cours sous chaque explication :
+//  - question du cours : citation exacte du manuel (vérifiée à la construction) + bouton vers la page
+//  - question des modules : bouton vers la page du manuel (+ fiches) qui en parle
+function manualTarget(page, mid) {
+  if (!COURS) return null;
+  const keys = m => (COURS.mods[m] || []).filter(k => COURS.docs[k].kind === 'manuel' && COURS.docs[k].pages.includes(page));
+  if (keys(mid)[0]) return [mid, keys(mid)[0]];
+  for (const m of Object.keys(COURS.mods)) if (keys(m)[0]) return [+m, keys(m)[0]];
+  return null;
+}
+function qRefs(q, mid) {
+  if (!q.cref || !q.cref.length) return coursRefs(q, mid);
+  const t = manualTarget(q.cref[0].page, mid);
+  return q.cref.map((r, i) => `<div class="quote"><div class="src">${ic('book')}Manuel CCA pratique · p. ${esc(pshort(String(r.printed)))}</div>${r.quote ? `<q>${esc(r.quote)}</q>` : ''}
+    ${i === q.cref.length - 1 && t ? `<div><button class="btn" onclick="openCours(${t[0]},'${t[1]}',${q.cref[0].page},'Manuel CCA pratique')">${ic('book')}Ouvrir le manuel à cette page</button></div>` : ''}</div>`).join('');
+}
+
+// ---------- paramètres : réinitialiser la progression ----------
+// (les identifiants d'étapes sont uniques sur le site de l'école : effacer un module ne touche pas aux autres)
+const resetMod = m => { delete store.runs[m.id]; m.steps.forEach(s => delete store.q[s.sid]); coursQ().filter(q => q.mod === m.id).forEach(q => delete store.q[q.sid]); };
+const modDone = m => m.steps.filter(s => isQ(s) && store.q[s.sid]).length;
+function settings() {
+  S = null; app.className = 'narrow';
+  document.body.classList.remove('session'); side.innerHTML = '';
+  bar.innerHTML = `<div class="topbar"><div class="topbar-in"><button class="back" onclick="home()">${ic('back')}Modules</button>
+    <h2>PARAMÈTRES – ${F.label.toUpperCase()}</h2></div></div>`;
+  const total = DATA.modules.reduce((a, m) => a + modDone(m), 0);
+  app.innerHTML = `<div class="qcard"><h2 class="q-title">Réinitialiser la progression</h2>
+    <p class="hint" style="text-align:center">Efface les réponses enregistrées, les erreurs et le meilleur score du module choisi. L'autre formation n'est pas touchée.</p>
+    ${DATA.modules.map(m => { const n = modDone(m), nq = m.steps.filter(isQ).length; return `<div class="set-row">
+      <span class="mod-ic">${ic(MOD_IC[m.id] || 'book')}</span>
+      <div style="flex:1;min-width:0"><div class="mod-name">${esc(m.name)}</div><div class="mod-meta">${n ? `${n}/${nq} questions répondues` : 'Aucune progression'}${store.runs[m.id] != null ? ` · meilleur ${store.runs[m.id]} %` : ''}</div></div>
+      <button class="btn" onclick="askReset(${m.id})" ${n || store.runs[m.id] != null ? '' : 'disabled'}>${ic('trash')}Réinitialiser</button></div>`; }).join('')}
+    <div class="nav"><button class="btn" onclick="home()">${ic('back')}Retour</button>
+      <button class="btn danger" onclick="askReset('all')" ${total ? '' : 'disabled'}>${ic('trash')}Tout réinitialiser (${F.label})</button></div></div>`;
+  scrollTo(0, 0);
+}
+function askReset(which) {
+  const label = which === 'all' ? `toute la formation ${F.label}` : `le module « ${mod(which).name} »`;
+  if (!window.confirm(`Effacer la progression de ${label} ?\nCette action est définitive.`)) return;
+  (which === 'all' ? DATA.modules : [mod(which)]).forEach(resetMod);
+  save(); settings();
+}
+
+// ---------- session ----------
+let S = null;
+function startCourse(id) {
+  const m = mod(id);
+  S = { title:m.name, modId:id, mode:'course', items:[{type:'intro', html:m.intro, title:m.name}, ...m.steps], i:0, score:0, nq:0, res:{}, t0:Date.now() };
+  render();
+}
+function startQuiz(which, mistakesOnly) {
+  let qs, title, modId = null;
+  if (which === 'all') { qs = allQ(); title = 'Quiz complet'; }
+  else if (which === 'mistakes') { qs = everyQ().filter(q => isMistake(q.sid)); title = 'Mes erreurs'; }
+  else { const m = mod(which); modId = m.id; title = m.name + (mistakesOnly ? ' – erreurs' : ''); qs = m.steps.filter(isQ).map(s => ({...s, mod:m.id})); if (mistakesOnly) qs = qs.filter(q => isMistake(q.sid)); }
+  S = { title, modId: mistakesOnly ? null : modId, mode:'quiz', items:shuffle(qs), i:0, score:0, nq:0, res:{}, t0:Date.now() };
+  render();
+}
+// ---------- entraînement : paramétrage (source, modules, nombre, mode révision / examen) ----------
+let TRAIN = { src:'both', n:20, exam:false, mods:null };
+try { TRAIN = { ...TRAIN, ...JSON.parse(localStorage.getItem('cca-train')) || {}, mods:null }; } catch (e) {}
+function trainPool() {
+  const src = TRAIN.src === 'cours' ? coursQ() : TRAIN.src === 'modules' ? allQ() : everyQ();
+  return TRAIN.mods ? src.filter(q => TRAIN.mods.includes(q.mod)) : src;
+}
+// fromStart : ouvert depuis le premier écran → « Retour » y ramène
+let trainFromStart = false;
+function trainSetup(fromStart) {
+  if (fromStart !== undefined) trainFromStart = !!fromStart;
+  const back = trainFromStart ? 'chooser()' : 'home()';
+  S = null; closeCours(); app.className = 'narrow';
+  document.body.classList.remove('session'); side.innerHTML = '';
+  bar.innerHTML = `<div class="topbar"><div class="topbar-in"><button class="back" onclick="${back}">${ic('back')}${trainFromStart ? 'Accueil' : 'Modules'}</button>
+    <h2>ENTRAÎNEMENT – ${F.label.toUpperCase()}</h2></div></div>`;
+  const nC = coursQ().length, nM = allQ().length;
+  const mods = DATA.modules;
+  const sel = TRAIN.mods || mods.map(m => m.id);
+  app.innerHTML = `<div class="qcard setup"><h2 class="q-title">Paramétrer l'entraînement</h2>
+    <h3>Questions</h3>
+    <div class="seg" id="t-src">
+      ${[['both', 'Cours + modules', nC + nM], ['cours', 'Questions du cours', nC], ['modules', 'Questions des modules', nM]].map(([v, l, n]) =>
+        `<label><input type="radio" name="src" value="${v}" ${TRAIN.src === v ? 'checked' : ''}>${l} <small>(${n})</small></label>`).join('')}
+    </div>
+    <h3>Modules inclus</h3>
+    <div class="seg" id="t-mods">${mods.map(m => `<label><input type="checkbox" value="${m.id}" ${sel.includes(m.id) ? 'checked' : ''}>${esc(m.name.replace(/^Module (\d) · /, 'M$1 · '))}</label>`).join('')}</div>
+    <h3>Nombre de questions</h3>
+    <div class="seg" id="t-n">${[20, 50, 75, 100, 0].map(n => `<label><input type="radio" name="n" value="${n}" ${TRAIN.n === n ? 'checked' : ''}>${n || 'Toutes'}</label>`).join('')}</div>
+    <h3>Mode</h3>
+    <div class="modebox" id="t-mode">
+      <label><input type="radio" name="mode" value="rev" ${TRAIN.exam ? '' : 'checked'}><span><b>Mode révision</b><span>Correction et explication juste après chaque réponse, avec le renvoi au manuel.</span></span></label>
+      <label><input type="radio" name="mode" value="exam" ${TRAIN.exam ? 'checked' : ''}><span><b>Mode examen</b><span>Aucune correction pendant le test. Score et correction détaillée à la fin.</span></span></label>
+    </div>
+    <p class="total" id="t-total"></p>
+    <div class="nav"><button class="btn" onclick="${back}">${ic('back')}Retour</button><button class="btn primary" id="t-go" onclick="startTrain()">${ic('play')}Commencer</button></div></div>`;
+  const sync = () => {
+    TRAIN.src = app.querySelector('#t-src input:checked').value;
+    const ch = [...app.querySelectorAll('#t-mods input:checked')].map(x => +x.value);
+    TRAIN.mods = ch.length === mods.length ? null : ch;
+    TRAIN.n = +app.querySelector('#t-n input:checked').value;
+    TRAIN.exam = app.querySelector('#t-mode input:checked').value === 'exam';
+    const pool = trainPool().length;
+    // nombres plus grands que la réserve : désactivés
+    app.querySelectorAll('#t-n input').forEach(x => { x.disabled = +x.value > pool; });
+    if (TRAIN.n > pool) { const ok = [...app.querySelectorAll('#t-n input')].filter(x => !x.disabled); const last = ok.filter(x => +x.value).pop() || ok[ok.length - 1]; last.checked = true; TRAIN.n = +last.value; }
+    const n = TRAIN.n ? Math.min(TRAIN.n, pool) : pool;
+    app.querySelector('#t-total').textContent = pool ? `${n} question${n > 1 ? 's' : ''} tirée${n > 1 ? 's' : ''} au hasard parmi ${pool} · ${TRAIN.exam ? 'mode examen' : 'mode révision'}` : 'Aucune question avec ces réglages.';
+    document.getElementById('t-go').disabled = !pool;
+  };
+  app.querySelectorAll('.setup input').forEach(x => x.addEventListener('change', sync));
+  sync(); scrollTo(0, 0);
+}
+function startTrain() {
+  const pool = trainPool();
+  if (!pool.length) return;
+  try { localStorage.setItem('cca-train', JSON.stringify({ src:TRAIN.src, n:TRAIN.n, exam:TRAIN.exam })); } catch (e) {}
+  const items = shuffle(pool).slice(0, TRAIN.n || pool.length);
+  S = { title:`${TRAIN.exam ? 'Examen blanc' : 'Entraînement'} – ${items.length} questions`, modId:null, mode:'quiz', exam:TRAIN.exam, train:true,
+    items, i:0, score:0, nq:0, res:{}, review:{}, t0:Date.now() };
+  render();
+}
+
+// ----- menu latéral -----
+let sideOpen = innerWidth > 900;
+try { const v = localStorage.getItem('cca-side'); if (v !== null && innerWidth > 900) sideOpen = v === '1'; } catch (e) {}
+function setSide(open) {
+  sideOpen = open;
+  document.body.classList.toggle('side-closed', !open);
+  if (innerWidth > 900) try { localStorage.setItem('cca-side', open ? '1' : '0'); } catch (e) {}
+}
+const STEP_IC = { intro:'flag', video:'pcircle', page:'book', pdf:'doc', mcq:'checklist', truefalse:'help', match:'dots', order:'reorder', hotspot:'shapes' };
+function renderSide() {
+  const atEnd = S.i >= S.items.length;
+  const li = (i, icon, label, extra) => {
+    // mode examen : pas de ✔/✘ avant la fin, juste « répondue »
+    const hide = S.exam && !S.done, r = hide ? undefined : S.res[i], cur = i === S.i;
+    const cls = ['step', cur ? 'cur' : '', r === true ? 'ok' : r === false ? 'ko' : (i < S.i || (hide && S.res[i] !== undefined)) ? 'seen' : ''].join(' ');
+    const dot = r === true ? ic('check') : r === false ? ic('x') : '';
+    return `<li class="${cls}" ${extra || `onclick="goTo(${i})"`} title="${esc(label)}"><span class="dot">${dot}</span><span class="sic">${ic(icon)}</span><span class="lbl">${esc(label)}</span></li>`;
+  };
+  side.innerHTML = `<div class="side-head"><span>${S.mode === 'quiz' ? 'Questions' : 'Étapes du module'}</span>
+    <button class="side-x" onclick="setSide(false)" aria-label="Fermer le menu">${ic('x')}</button></div>
+    <ol class="steps">${S.items.map((it, i) => li(i, STEP_IC[it.type] || 'help', it.type === 'intro' ? 'Introduction' : it.title)).join('')}
+    ${li(S.items.length, 'flag', 'Mes résultats')}</ol>`;
+  const c = side.querySelector('.step.cur'); if (c) c.scrollIntoView({ block:'nearest' });
+}
+function goTo(i) { S.i = i; if (innerWidth <= 900) setSide(false); render(); }
+function topbar() {
+  const pct = S.i >= S.items.length ? 100 : S.i / S.items.length * 100;
+  bar.innerHTML = `<div class="topbar"><div class="topbar-in"><button class="back menu-btn" onclick="setSide(!sideOpen)" aria-label="Menu">${ic('menu')}</button><button class="back" onclick="askQuit()">${ic('back')}Quitter</button>
+    <h2>CCA PRATIQUE ${F.label.toUpperCase()} – ${esc(S.title.toUpperCase())}</h2>
+    ${(() => { const it = S.items[S.i], mid = (it && it.mod) || S.modId; if (!hasCours(mid)) return '';
+      let r = it && COURS.q[it.sid] && COURS.q[it.sid][0];
+      if (!r && it && it.cref) { const t = manualTarget(it.cref[0].page, mid); if (t && t[0] === mid) r = { doc:t[1], page:it.cref[0].page }; }
+      return `<button class="back" title="Ouvrir le cours de ce module" onclick="openCours(${mid}${r ? `,'${r.doc}',${r.page}` : ''})">${ic('book')}<span class="hide-sm">Cours</span></button>`; })()}<span class="live">${Math.min(S.i + 1, S.items.length)} / ${S.items.length}${S.nq ? (S.exam && !S.done ? ` · ${S.nq} répondue${S.nq > 1 ? 's' : ''}` : ` · ${S.score}/${S.nq} ✓`) : ''}</span>
+    ${S.i < S.items.length ? `<button class="back cont" onclick="mainAction()">Continuer${ic('next')}</button>` : ''}</div>
+    <div class="progress"><i style="width:${pct}%"></i></div></div>`;
+  document.body.classList.add('session');
+  document.body.classList.toggle('side-closed', !sideOpen);
+  document.documentElement.style.setProperty('--topbar-h', bar.offsetHeight + 'px');
+  renderSide();
+}
+
+function render() {
+  if (S.i >= S.items.length) return finish();
+  app.className = 'narrow';
+  topbar();
+  const it = S.items[S.i];
+  S.answered = false;
+  // mode examen : une question déjà répondue n'est pas rejouable ; sa correction n'apparaît qu'une fois le test terminé
+  if (S.exam && S.review[S.i]) {
+    const nav = `<div class="nav"><button class="btn" onclick="prev()" ${S.i ? '' : 'disabled'}>${ic('back')}Précédent</button><button class="btn primary" onclick="next()">${S.i + 1 < S.items.length ? `Suivante${ic('next')}` : 'Voir le résultat'}</button></div>`;
+    app.innerHTML = `<div class="qcard">${S.done ? S.review[S.i].html : `<div class="kicker"><span class="type">${ic('flag')}Examen</span></div><h2 class="q-title">${esc(it.title)}</h2>
+      <p class="hint" style="text-align:center">Réponse enregistrée. La correction s'affichera à la fin du test.</p>`}${nav}</div>`;
+    return scrollTo(0, 0);
+  }
+  let body = '';
+  if (it.type === 'intro') body = `<div class="kicker"><span class="type">${ic('book')}Introduction</span></div><h2 class="q-title">${esc(it.title)}</h2><div class="intro">${it.html}</div>`;
+  else if (it.type === 'video') body = `<div class="kicker"><span class="type">${ic('play')}Vidéo</span></div><h2 class="q-title">${esc(it.title)}</h2>
+      ${it.description ? `<div class="desc">${it.description}</div>` : ''}
+      ${it.youtubeId
+        ? `<div class="yt-box"><iframe src="https://www.youtube-nocookie.com/embed/${it.youtubeId}" title="${esc(it.title)}" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`
+        : /^(localhost|127\.0\.0\.1)$|^$/.test(location.hostname)
+          ? `<div class="video-box"><video controls preload="metadata" src="videos/${encodeURIComponent(it.video)}"></video></div>`
+          : `<div class="desc">Vidéo bientôt disponible.</div>`}
+      ${coursRefs(it, it.mod || S.modId)}`;
+  else if (it.type === 'page') body = `<div class="kicker"><span class="type">${ic('book')}Cours</span></div><h2 class="q-title">${esc(it.title)}</h2>
+      <div class="intro">${it.html || ''}</div>
+      ${it.youtube ? `<div class="yt-box"><iframe src="https://www.youtube-nocookie.com/embed/${it.youtube}" title="${esc(it.title)}" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+      <p class="file"><a href="https://www.youtube.com/watch?v=${it.youtube}" target="_blank" rel="noopener">${ic('ext')} Ouvrir la vidéo sur YouTube</a> (nécessite Internet)</p>` : ''}`;
+  else if (it.type === 'pdf') body = `<div class="kicker"><span class="type">${ic('doc')}Fiche récapitulative</span></div><h2 class="q-title">${esc(it.title)}</h2>
+      <div class="pdf-box"><iframe src="media/${encodeURIComponent(it.pdf)}#view=FitH" title="${esc(it.title)}"></iframe></div>
+      <p class="file"><a href="media/${encodeURIComponent(it.pdf)}" target="_blank">${ic('ext')} Ouvrir le PDF en plein écran</a></p>`;
+  else body = renderQ(it);
+  const nextBtn = isQ(it) ? `<button class="btn primary" id="check">${S.exam ? `Valider et continuer${ic('next')}` : 'Valider'}</button>` : `<button class="btn primary" onclick="next()">Continuer${ic('next')}</button>`;
+  app.innerHTML = `<div class="qcard">${body}<div id="fb"></div>
+    <div class="nav"><button class="btn" onclick="prev()" ${S.i ? '' : 'disabled'}>${ic('back')}Précédent</button>${nextBtn}</div></div>`;
+  if (isQ(it)) { bindQ(it); document.getElementById('check').onclick = () => S.answered ? next() : check(it); }
+  scrollTo(0, 0);
+}
+// ----- quitter : confirmation avant de revenir à l'accueil (tous les modes) -----
+function askQuit() {
+  // session terminée (page de résultat) : rien à perdre, on sort directement
+  if (!S || S.i >= S.items.length) return quitNow();
+  if (document.getElementById('quitbox')) return;
+  const answered = Object.keys(S.res || {}).length;
+  const box = document.createElement('div');
+  box.id = 'quitbox'; box.className = 'quit-ov';
+  box.innerHTML = `<div class="quit-card" role="alertdialog" aria-modal="true" aria-labelledby="quit-t">
+    <span class="ic red">${ic('flag')}</span>
+    <h3 id="quit-t">Quitter ${S.exam ? "l'examen" : S.mode === 'course' ? 'le module' : 'le questionnaire'} ?</h3>
+    <p>${answered ? `Tu as répondu à ${answered} question${answered > 1 ? 's' : ''}. ` : ''}Les réponses déjà validées restent enregistrées, mais ${S.exam ? "l'examen ne sera pas noté et sa correction sera perdue" : 'cette session ne pourra pas être reprise'}.</p>
+    <div class="quit-btns"><button class="btn" id="quit-no">${ic('play')}Non, reprendre</button><button class="btn danger" onclick="quitNow()">${ic('back')}Oui, quitter</button></div></div>`;
+  box.addEventListener('click', e => { if (e.target === box) closeQuit(); });
+  document.body.appendChild(box);
+  const no = document.getElementById('quit-no'); no.onclick = closeQuit; no.focus();
+}
+function closeQuit() { const b = document.getElementById('quitbox'); if (b) b.remove(); }
+function quitNow() { closeQuit(); closeCours(); S = null; chooser(); }
+
+// bouton « Continuer » du haut, comme sur le site : valide la question ou passe à l'étape suivante
+function mainAction() { const b = document.getElementById('check'); if (b) b.click(); else next(); }
+function next() { S.i++; render(); }
+function prev() { if (S.i) { S.i--; render(); } }
+
+// ---------- questions ----------
+function head(q) {
+  const [icn, lab] = TYPE_LABEL[q.type];
+  const m = S.mode === 'quiz' && q.mod && !S.modId ? `<span>· ${esc(mod(q.mod).name)}</span>` : '';
+  const wasKo = isMistake(q.sid) ? '<span class="chip ko">ratée la dernière fois</span>' : '';
+  const src = q.source === 'cours' ? '<span class="chip cours">Question du cours</span>' : '';
+  return `<div class="kicker"><span class="type">${ic(icn)}${lab}</span>${m}${src}${wasKo}</div>
+    <h2 class="q-title">${esc(q.title)}</h2>${q.description ? `<div class="desc">${q.description}</div>` : ''}<div id="fbtop"></div>`;
+}
+const LET = 'ABCDEFGHIJ';
+function renderQ(q) {
+  if (q.type === 'mcq' || q.type === 'truefalse') {
+    // cases à cocher ou boutons radio exactement comme sur le site (aucun indice sur le nombre de réponses)
+    const multi = q.type === 'mcq' && q.input !== 'radio';
+    const base = q.options.map((o, k) => ({...o, k}));
+    const opts = q.type === 'truefalse' || S.mode === 'course' ? base : shuffle(base); // ordre du site en mode cours
+    q._shown = opts.map(o => o.k);
+    const cls = q.type === 'truefalse' ? ' class="tf"' : '';
+    return head(q) + `<div id="ans"${cls}>` +
+      opts.map((o, i) => `<label class="opt${multi ? ' multi' : ''}" data-k="${o.k}"><input type="${multi ? 'checkbox' : 'radio'}" name="o">${q.type === 'truefalse' ? '' : `<span class="letter">${LET[i]}</span>`}<span>${esc(o.text)}</span></label>`).join('') + '</div>';
+  }
+  if (q.type === 'match') {
+    const rights = [...new Set(q.pairs.map(p => p.right))];
+    const rows = q.pairs.map((p, k) => ({...p, k}));
+    return head(q) + `<div id="ans"><p class="hint">Associe chaque élément à sa correspondance</p>` + (S.mode === 'course' ? rows : shuffle(rows)).map(p => `<div class="match-row" data-k="${p.k}"><div class="l">${esc(p.left)}</div>
+      <select aria-label="${esc(p.left)}"><option value="">Choisir…</option>${shuffle(rights).map(r => `<option>${esc(r)}</option>`).join('')}</select></div>`).join('') + '</div>';
+  }
+  if (q.type === 'order') {
+    let o; do { o = shuffle(q.items.map((t, k) => ({t, k}))); } while (q.items.length > 1 && o.every((x, i) => x.k === i));
+    q._order = o;
+    return head(q) + `<div id="ans"><p class="hint">Remets les étapes dans l'ordre avec les flèches</p><div id="olist"></div></div>`;
+  }
+  if (q.type === 'hotspot') {
+    q._clicks = [];
+    q._targets = shuffle(q.zones.map((z, k) => ({...z, k})));
+    return head(q) + `<p class="hint">Clique sur l'image pour chaque élément, dans l'ordre indiqué</p>
+      <div class="hs-wrap"><ul class="hs-list" id="hsl"></ul><div class="hs" id="hs"><img src="media/${encodeURIComponent(q.image)}" alt=""></div></div>
+      <div style="margin-top:8px"><button class="btn" id="hsundo">${ic('redo')}Annuler le dernier clic</button></div>`;
+  }
+}
+function bindQ(q) {
+  if (q.type === 'mcq' || q.type === 'truefalse') {
+    app.querySelectorAll('.opt').forEach(l => l.addEventListener('change', () => app.querySelectorAll('.opt').forEach(x => x.classList.toggle('sel', x.querySelector('input').checked))));
+  }
+  if (q.type === 'order') drawOrder(q);
+  if (q.type === 'hotspot') {
+    drawHs(q);
+    document.getElementById('hs').addEventListener('click', e => {
+      if (S.answered || q._clicks.length >= q._targets.length) return;
+      const r = e.currentTarget.getBoundingClientRect();
+      q._clicks.push({ x:(e.clientX - r.left) / r.width * 100, y:(e.clientY - r.top) / r.height * 100 });
+      drawHs(q);
+    });
+    document.getElementById('hsundo').onclick = () => { if (!S.answered) { q._clicks.pop(); drawHs(q); } };
+  }
+}
+function drawOrder(q, res) {
+  document.getElementById('olist').innerHTML = q._order.map((o, i) => `<div class="order-item ${res ? (o.k === i ? 'good' : 'bad') : ''}"><span class="n">${i + 1}</span><span class="t">${esc(o.t)}</span>
+    ${res ? '' : `<button class="mv" onclick="mv(${i},-1)" ${i ? '' : 'disabled'} aria-label="monter">${ic('up')}</button><button class="mv" onclick="mv(${i},1)" ${i < q._order.length - 1 ? '' : 'disabled'} aria-label="descendre">${ic('down')}</button>`}</div>`).join('');
+}
+function mv(i, d) { const q = S.items[S.i]; const o = q._order; [o[i], o[i + d]] = [o[i + d], o[i]]; drawOrder(q); }
+function inZone(c, z) { const pad = 1.5; return c.x >= z.left - pad && c.x <= z.left + z.width + pad && c.y >= z.top - pad && c.y <= z.top + z.height + pad; }
+function drawHs(q, res) {
+  const hs = document.getElementById('hs');
+  hs.querySelectorAll('.pin,.z').forEach(x => x.remove());
+  document.getElementById('hsl').innerHTML = q._targets.map((t, i) => {
+    const st = res ? (inZone(q._clicks[i] || {x:-99, y:-99}, t) ? 'good' : 'bad') : i === q._clicks.length ? 'cur' : i < q._clicks.length ? 'done' : '';
+    return `<li class="${st}">${i + 1}. ${esc(t.name)}</li>`;
+  }).join('');
+  q._clicks.forEach((c, i) => { const p = document.createElement('div'); p.className = 'pin' + (res ? (inZone(c, q._targets[i]) ? ' good' : ' bad') : ''); p.style.left = c.x + '%'; p.style.top = c.y + '%'; p.textContent = i + 1; hs.appendChild(p); });
+  if (res) q._targets.forEach((t, i) => { const z = document.createElement('div'); z.className = 'z'; Object.assign(z.style, { left:t.left + '%', top:t.top + '%', width:t.width + '%', height:t.height + '%' }); z.textContent = i + 1; hs.appendChild(z); });
+}
+
+function check(q) {
+  let ok;
+  const ans = document.getElementById('ans');
+  const col = (title, items) => `<div class="col"><h3>${title}</h3>${items.join('')}</div>`;
+  if (q.type === 'mcq' || q.type === 'truefalse') {
+    const labels = [...app.querySelectorAll('.opt')];
+    if (!labels.some(l => l.querySelector('input').checked)) return;
+    const picked = new Set(labels.filter(l => l.querySelector('input').checked).map(l => +l.dataset.k));
+    ok = q.options.every((o, k) => o.correct === picked.has(k));
+    if (q.type === 'truefalse') {
+      // comme sur le site : seule la réponse donnée est affichée, entourée en vert ou rouge
+      labels.forEach(l => { const on = picked.has(+l.dataset.k); l.querySelector('input').disabled = true; l.classList.add('locked'); l.classList.remove('sel'); if (on) l.classList.add(ok ? 'good' : 'bad'); });
+    } else {
+      // comme sur le site : « Votre réponse » à gauche, « Réponse attendue » à droite
+      const box = (k, on, cls) => `<div class="ans-item ${cls}"><span class="cb ${q.input === 'radio' ? 'rd' : ''} ${on ? 'on' : ''}"></span><span>${esc(q.options[k].text)}</span></div>`;
+      ans.className = 'cols';
+      ans.innerHTML = col('Votre réponse', q._shown.map(k => box(k, picked.has(k), picked.has(k) ? (q.options[k].correct ? 'good' : 'bad') : ''))) +
+        col('Réponse attendue', q._shown.map(k => box(k, q.options[k].correct, '')));
+    }
+  } else if (q.type === 'match') {
+    const rows = [...app.querySelectorAll('.match-row')];
+    if (rows.some(r => !r.querySelector('select').value)) return;
+    const mine = rows.map(r => ({ p:q.pairs[+r.dataset.k], v:r.querySelector('select').value }));
+    ok = mine.every(x => x.v === x.p.right);
+    ans.className = 'cols';
+    ans.innerHTML = col('Réponse correcte', q.pairs.map(p => `<div class="ans-item">${esc(p.left)} => ${esc(p.right)}</div>`)) +
+      col('Votre réponse', q.pairs.map(p => { const x = mine.find(m => m.p === p); return `<div class="ans-item ${x.v === p.right ? 'good' : 'bad'}">${esc(p.left)} => ${esc(x.v)}</div>`; }));
+  } else if (q.type === 'order') {
+    ok = q._order.every((o, i) => o.k === i);
+    ans.className = 'cols';
+    ans.innerHTML = col('Proposition correcte', q.items.map((t, i) => `<div class="ans-item"><b class="num">${i + 1}</b>${esc(t)}</div>`)) +
+      col('Votre proposition', q._order.map((o, i) => `<div class="ans-item ${o.k === i ? 'good' : 'bad'}">${esc(o.t)}</div>`));
+  } else if (q.type === 'hotspot') {
+    if (q._clicks.length < q._targets.length) return;
+    ok = q._targets.every((t, i) => inZone(q._clicks[i], t));
+    drawHs(q, true);
+    document.getElementById('hsundo').remove();
+  }
+  S.answered = true; S.res[S.i] = ok;
+  const rv = Object.values(S.res); S.nq = rv.length; S.score = rv.filter(Boolean).length;
+  record(q.sid, ok);
+  topbar();
+  // comme sur le site : carte « Bonne / Mauvaise réponse » + explication, juste sous l'énoncé
+  document.getElementById('fbtop').innerHTML = `<div class="fbcard"><div class="feedback ${ok ? 'ok' : 'ko'}">${ic(ok ? 'check' : 'x')}${ok ? 'Bonne réponse' : 'Mauvaise réponse'}</div>` +
+    (q.explanation ? `<div class="expl"><strong class="h">${ic('bulb')}Explication</strong>${q.explanation}</div>` : '') +
+    qRefs(q, q.mod || S.modId) + '</div>';
+  // mode examen : on garde la correction de côté (affichée à la fin) et on passe directement à la suite
+  if (S.exam) {
+    const card = app.querySelector('.qcard').cloneNode(true);
+    const nav = card.querySelector('.nav'); if (nav) nav.remove();
+    card.querySelectorAll('input,select,button.mv').forEach(x => x.disabled = true);
+    S.review[S.i] = { ok, html: card.innerHTML.replace(/\sid="[^"]*"/g, '') };
+    return next();
+  }
+  const b = document.getElementById('check');
+  b.innerHTML = S.i + 1 < S.items.length ? `Question suivante${ic('next')}` : 'Voir le résultat';
+  b.focus();
+}
+
+// fin d'un examen blanc : score + correction détaillée de chaque question (réponse donnée, attendue, explication, manuel)
+function examFinish() {
+  S.done = true;
+  topbar();
+  const pct = S.nq ? Math.round(S.score / S.nq * 100) : null;
+  const mins = Math.max(1, Math.round((Date.now() - (S.t0 || Date.now())) / 60000));
+  const skipped = S.items.length - S.nq, wrong = S.items.filter(q => isQ(q) && isMistake(q.sid)).length;
+  const rows = S.items.map((q, i) => {
+    const r = S.review[i];
+    if (!r) return `<details data-ok="0"><summary><span class="rk ko">${ic('x')}</span><span class="rt">${i + 1}. ${esc(q.title)}</span><span class="chip">non répondue</span></summary></details>`;
+    return `<details data-ok="${r.ok ? 1 : 0}" ${r.ok ? '' : 'open'}><summary><span class="rk ${r.ok ? 'ok' : 'ko'}">${ic(r.ok ? 'check' : 'x')}</span><span class="rt">${i + 1}. ${esc(q.title)}</span></summary><div class="rbody">${r.html}</div></details>`;
+  }).join('');
+  app.innerHTML = `<div class="qcard result">
+    <h2 class="q-title">Résultat de l'examen blanc</h2>
+    <div class="outro-stats">
+      <div><span>Temps passé</span><b>${mins}m</b></div>
+      <div><span>Mon score</span>${pct != null ? `<div class="big-ring">${ring(pct, 120, 10, pctColor(pct))}<b>${pct} %</b></div>` : '<b>–</b>'}</div>
+    </div>
+    <p>${S.score} / ${S.items.length} bonnes réponses${skipped ? ` · ${skipped} non répondue${skipped > 1 ? 's' : ''}` : ''}</p>
+    <div class="btns">
+      ${wrong ? `<button class="btn primary" onclick="redoWrong()">${ic('redo')}${wrong > 1 ? `Refaire mes ${wrong} erreurs` : 'Refaire mon erreur'}</button>` : ''}
+      <button class="btn" onclick="trainSetup()">${ic('target')}Nouvel entraînement</button>
+      <button class="btn" onclick="home()">${ic('back')}Retour vers la formation</button></div>
+    <div class="report-bar"><span class="seg"><label><input type="radio" name="rf" checked onchange="filterReport(false)">Toutes les questions</label><label><input type="radio" name="rf" onchange="filterReport(true)">Seulement mes erreurs</label></span></div>
+    <div class="report">${rows}</div></div>`;
+  scrollTo(0, 0);
+}
+function filterReport(errOnly) { app.querySelectorAll('.report details').forEach(d => { d.style.display = errOnly && d.dataset.ok === '1' ? 'none' : ''; }); }
+
+function finish() {
+  if (S.exam) return examFinish();
+  topbar();
+  const pct = S.nq ? Math.round(S.score / S.nq * 100) : null;
+  if (S.mode === 'quiz' && S.modId && pct != null) { store.runs[S.modId] = Math.max(store.runs[S.modId] ?? 0, pct); save(); }
+  const wrong = S.items.filter(q => isQ(q) && isMistake(q.sid)).length;
+  // page de fin calquée sur celle du site : « Vous avez terminé le module … », temps passé, score
+  const m = S.modId ? mod(S.modId) : null;
+  const ids = DATA.modules.map(x => x.id), nextId = m ? ids[ids.indexOf(m.id) + 1] : null;
+  const mins = Math.max(1, Math.round((Date.now() - (S.t0 || Date.now())) / 60000));
+  const nextBtn = nextId ? `<button class="btn primary" onclick="${S.mode === 'course' && !mod(nextId).assessment ? `startCourse(${nextId})` : `startQuiz(${nextId})`}">Passer au module suivant${ic('next')}</button>` : '';
+  app.innerHTML = `<div class="qcard result">
+    <h2 class="q-title">${m ? `Vous avez terminé le module ${esc(m.name.toUpperCase())}` : `Vous avez terminé : ${esc(S.title)}`}</h2>
+    <div class="outro-stats">
+      <div><span>Temps passé dans le module</span><b>${mins}m</b></div>
+      <div><span>Mon score</span>${pct != null ? `<div class="big-ring">${ring(pct, 120, 10, pctColor(pct))}<b>${pct} %</b></div>` : '<b>–</b>'}</div>
+    </div>
+    <p>${pct != null ? `${S.score} / ${S.nq} bonnes réponses${m && m.assessment ? (pct >= 90 ? ' · seuil de 90 % atteint' : ' · 90 % requis') : ''}` : 'Aucune question répondue.'}</p>
+    <div class="btns">
+      ${nextBtn}
+      ${wrong ? `<button class="btn ${nextBtn ? '' : 'primary'}" onclick="redoWrong()">${ic('redo')}${wrong > 1 ? `Refaire mes ${wrong} erreurs` : 'Refaire mon erreur'}</button>` : ''}
+      <button class="btn" onclick="${S.mode === 'quiz' ? 'restart()' : `startQuiz(${S.modId})`}">${ic(S.mode === 'quiz' ? 'shuffle' : 'play')}${S.mode === 'quiz' ? 'Recommencer' : 'Faire le quiz'}</button>
+      <button class="btn" onclick="home()">${ic('back')}Retour vers la formation</button></div></div>`;
+  scrollTo(0, 0);
+}
+function redoWrong() { const qs = S.items.filter(q => isQ(q) && isMistake(q.sid)); S = { ...S, title:S.title.replace(/ – erreurs$/, '') + ' – erreurs', modId:null, mode:'quiz', items:shuffle(qs), i:0, score:0, nq:0, res:{}, review:{}, done:false, t0:Date.now() }; render(); }
+function restart() { S = { ...S, items:shuffle(S.items), i:0, score:0, nq:0, res:{}, review:{}, done:false, t0:Date.now() }; render(); }
+document.addEventListener('click', e => { if (S && innerWidth <= 900 && sideOpen && e.target === document.body) setSide(false); });
+addEventListener('resize', () => { if (S) document.documentElement.style.setProperty('--topbar-h', bar.offsetHeight + 'px'); });
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('quitbox')) { if (e.key === 'Escape') { e.preventDefault(); closeQuit(); } return; }
+  if (CV) { if (e.key === 'Escape') closeCours(); return; }
+  if (!S || e.key !== 'Enter' || e.target.tagName === 'SELECT' || app.querySelector('.result')) return;
+  const b = document.getElementById('check'); if (b) b.click(); else { const c = app.querySelector('.nav .primary'); c && c.click(); }
+});
+// #securite / #secourisme dans l'adresse : on rouvre directement la formation (rafraîchissement, favori)
+const startKey = location.hash.slice(1);
+if (FORMATIONS[startKey] && FORMATIONS[startKey].data) openFormation(startKey); else chooser();
+addEventListener('hashchange', () => { const k = location.hash.slice(1); if (k !== (FK || '')) { if (FORMATIONS[k] && FORMATIONS[k].data) openFormation(k); else chooser(); } });
+</script>
+</body>
+</html>

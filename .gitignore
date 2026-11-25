@@ -1,0 +1,7 @@
+# Jamais en ligne : pages brutes de l'école (jetons de session), vidéos locales, notes et outils
+source/
+videos/
+tools/
+CLAUDE.md
+modules.json
+*.ts
