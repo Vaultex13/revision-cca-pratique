@@ -21,7 +21,7 @@
 }}
 /* ----- image de fond (paysage = PC, portrait = téléphone) ----- */
 :root{--bg-blur:2px;--veil:rgba(238,242,248,.45);--glass:rgba(255,255,255,.5);--glass2:rgba(255,255,255,.55)}
-@media (prefers-color-scheme:dark){:root{--veil:rgba(8,13,22,.26);--glass:rgba(22,31,45,.42);--glass2:rgba(22,31,45,.5)}}
+@media (prefers-color-scheme:dark){:root{--veil:rgba(8,13,22,.26);--glass:rgba(22,31,45,.42);--glass2:rgba(255,255,255,.07)}}
 .hero .stat{background:rgba(10,18,32,.3)!important}
 #bgimg{position:fixed;inset:0;z-index:-2;background:#0c121c url("media/bg-avion.png") center/cover no-repeat;filter:blur(var(--bg-blur));transform:scale(1.06)}
 @media (orientation:portrait){#bgimg{background-image:url("media/bg-mobile.png");background-position:center 40%}}
@@ -29,14 +29,27 @@
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 html{background:var(--bg)}
-/* « liquid glass » : teinte légère + reflet en diagonale, flou saturé, liseré lumineux en haut */
-:root{--lg-tint:rgba(255,255,255,.26);--lg-edge:rgba(255,255,255,.65);--lg-hi:rgba(255,255,255,.7);--lg-sheen:rgba(255,255,255,.22)}
-@media (prefers-color-scheme:dark){:root{--lg-tint:rgba(16,24,38,.26);--lg-edge:rgba(255,255,255,.2);--lg-hi:rgba(255,255,255,.32);--lg-sheen:rgba(255,255,255,.12)}}
+/* ----- « Liquid Glass » façon Apple -----
+   1) verre clair : peu de flou, saturation forte (le flou seul « salit » les couleurs), teinte très légère
+   2) liseré spéculaire : bord lumineux en haut à gauche, reflet plus faible en bas à droite (::after masqué en anneau)
+   3) relief : ombre interne claire sur le bord haut, sombre sur le bord bas, ombre portée douce
+   4) réfraction des bords (Chrome/Edge seulement) : filtre SVG de déplacement généré par taille de boîte (script lgInit) */
+:root{--lg-tint:rgba(255,255,255,.18);--lg-blur:7px;--lg-rim:rgba(255,255,255,.9);--lg-rim2:rgba(255,255,255,.45)}
+@media (prefers-color-scheme:dark){:root{--lg-tint:rgba(14,20,32,.22);--lg-rim:rgba(255,255,255,.62);--lg-rim2:rgba(255,255,255,.26)}}
 .mbox,.action,.mod,.qcard,.cchap,.hero .stat,body.session #side{
-  background:linear-gradient(135deg,var(--lg-sheen) 0%,rgba(255,255,255,.03) 38%,rgba(255,255,255,0) 62%,rgba(255,255,255,.07) 100%),var(--lg-tint)!important;
-  backdrop-filter:blur(18px) saturate(185%) brightness(1.06);-webkit-backdrop-filter:blur(18px) saturate(185%) brightness(1.06);
-  box-shadow:inset 0 1px 0 var(--lg-hi),inset 0 -1px 0 rgba(255,255,255,.06),inset 0 0 18px rgba(255,255,255,.04),0 10px 30px rgba(0,0,0,.26)!important}
-.action:hover:not(:disabled),.mod:hover,.cchap:hover{background:linear-gradient(135deg,rgba(255,255,255,.28) 0%,rgba(255,255,255,.06) 40%,rgba(255,255,255,.02) 62%,rgba(255,255,255,.1) 100%),var(--lg-tint)!important}
+  --lg-bf:blur(var(--lg-blur)) saturate(190%) brightness(1.08);
+  background:radial-gradient(120% 80% at 0% 0%,rgba(255,255,255,.10),rgba(255,255,255,0) 55%),var(--lg-tint)!important;
+  backdrop-filter:var(--lg-bf)!important;-webkit-backdrop-filter:var(--lg-bf)!important;
+  border-color:transparent!important;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.28),inset 0 -1px 1px rgba(0,0,0,.18),inset 0 0 22px rgba(255,255,255,.05),0 12px 32px rgba(0,0,0,.28),0 1px 3px rgba(0,0,0,.2)!important}
+.mbox,.action,.mod,.qcard,.cchap,.hero .stat{position:relative}
+.mbox::after,.action::after,.mod::after,.qcard::after,.cchap::after,.hero .stat::after,body.session #side::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;padding:1.3px;pointer-events:none;z-index:3;
+  background:linear-gradient(135deg,var(--lg-rim) 0%,rgba(255,255,255,.12) 22%,rgba(255,255,255,0) 45%,rgba(255,255,255,0) 58%,rgba(255,255,255,.1) 78%,var(--lg-rim2) 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+body.session #side::after{position:fixed;inset:auto;display:none}
+.action:hover:not(:disabled),.mod:hover,.cchap:hover{background:radial-gradient(120% 80% at 0% 0%,rgba(255,255,255,.18),rgba(255,255,255,0) 60%),var(--lg-tint)!important}
+.action.train{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 45%,transparent),inset 0 1px 1px rgba(255,255,255,.28),0 12px 32px rgba(0,0,0,.28)!important}
 .topbar{background:linear-gradient(135deg,rgba(15,35,71,.72),rgba(36,83,158,.55))!important;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .hero{background:transparent!important;text-shadow:0 1px 10px rgba(0,0,0,.55)}
 .hero::after{display:none}
@@ -360,7 +373,7 @@ body.session .menu-btn{display:inline-flex}
 }
 /* boîtes intérieures (boutons, propositions, encadrés) : semi-transparentes aussi ; le panneau Cours reste opaque.
    En fin de feuille pour passer devant les fonds de base ; les états (sélection, juste/faux) plus précis gardent leur couleur. */
-.btn:not(.primary),.opt,.ans-item,.order-item,.order-item .mv,.desc,.set-row,.report details,.seg label,.modebox label,.match-row select{background-color:var(--glass2);box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+.btn:not(.primary),.opt,.ans-item,.order-item,.order-item .mv,.desc,.set-row,.report details,.seg label,.modebox label,.match-row select{background-color:var(--glass2);border-color:rgba(255,255,255,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(0,0,0,.12)}
 .mbox,.action,.mod,.qcard,.cchap,.hero .stat,body.session #side{border-color:var(--lg-edge)}
 </style>
 </head>
@@ -1050,6 +1063,58 @@ document.addEventListener('keydown', e => {
 const startKey = location.hash.slice(1);
 if (FORMATIONS[startKey] && FORMATIONS[startKey].data) openFormation(startKey); else chooser();
 addEventListener('hashchange', () => { const k = location.hash.slice(1); if (k !== (FK || '')) { if (FORMATIONS[k] && FORMATIONS[k].data) openFormation(k); else chooser(); } });
+</script>
+<script>
+// Liquid Glass : réfraction des bords. Seul Chromium (Chrome, Edge) applique un filtre SVG en backdrop-filter ;
+// ailleurs on garde le verre CSS. Pour chaque taille de boîte, une carte de déplacement est dessinée : neutre au
+// centre, elle tire le fond vers l'intérieur près des bords (effet de lentille), selon la normale du rectangle arrondi.
+(function lgInit() {
+  const brands = (navigator.userAgentData && navigator.userAgentData.brands) || [];
+  if (!brands.some(b => /Chromium/.test(b.brand))) return;
+  if (matchMedia('(prefers-reduced-transparency: reduce)').matches) return;
+  const SEL = '.mbox,.action,.mod,.qcard,.cchap,.hero .stat', NS = 'http://www.w3.org/2000/svg', SCALE = 56;
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('width', '0'); svg.setAttribute('height', '0'); svg.setAttribute('aria-hidden', 'true');
+  svg.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+  document.body.appendChild(svg);
+  const made = new Set();
+  function mapURL(w, h, r) {
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const ctx = c.getContext('2d'), img = ctx.createImageData(w, h), px = img.data;
+    const E = Math.max(8, Math.min(24, Math.min(w, h) / 2.4)), cx = w / 2, cy = h / 2, hx = w / 2 - r, hy = h / 2 - r;
+    const sdf = (x, y) => { const qx = Math.abs(x - cx) - hx, qy = Math.abs(y - cy) - hy;
+      return Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - r; };
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const i = (y * w + x) * 4, X = x + .5, Y = y + .5, d = -sdf(X, Y);
+      let R = 128, G = 128;
+      if (d < E) {
+        const gx = sdf(X + 1, Y) - sdf(X - 1, Y), gy = sdf(X, Y + 1) - sdf(X, Y - 1), L = Math.hypot(gx, gy) || 1;
+        const t = 1 - Math.max(d, 0) / E, m = t * t * (3 - 2 * t);            // montée douce vers le bord
+        R = 128 - (gx / L) * m * 127; G = 128 - (gy / L) * m * 127;           // vers l'intérieur
+      }
+      px[i] = R; px[i + 1] = G; px[i + 2] = 128; px[i + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+    return c.toDataURL();
+  }
+  function apply(el) {
+    const w = Math.round(el.offsetWidth), h = Math.round(el.offsetHeight);
+    if (w < 8 || h < 8) return;
+    const r = Math.min(parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0, w / 2, h / 2);
+    const id = `lg-${w}-${h}-${Math.round(r)}`;
+    if (!made.has(id)) {
+      made.add(id);
+      svg.insertAdjacentHTML('beforeend', `<filter id="${id}" x="0" y="0" width="${w}" height="${h}" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feImage href="${mapURL(w, h, r)}" x="0" y="0" width="${w}" height="${h}" preserveAspectRatio="none" result="m"/>
+        <feDisplacementMap in="SourceGraphic" in2="m" scale="${SCALE}" xChannelSelector="R" yChannelSelector="G"/></filter>`);
+    }
+    el.style.setProperty('--lg-bf', `url(#${id}) blur(var(--lg-blur)) saturate(190%) brightness(1.08)`);
+  }
+  const ro = new ResizeObserver(es => es.forEach(e => apply(e.target))), seen = new WeakSet();
+  const scan = () => document.querySelectorAll(SEL).forEach(el => { if (!seen.has(el)) { seen.add(el); ro.observe(el); } });
+  new MutationObserver(scan).observe(document.body, { childList: true, subtree: true });
+  scan();
+})();
 </script>
 </body>
 </html>
