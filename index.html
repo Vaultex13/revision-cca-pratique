@@ -521,7 +521,6 @@ function home() {
     <button class="action" onclick="startQuiz('all')"><span class="ic blue">${ic('shuffle')}</span><span><b>Quiz complet mélangé</b><span>${Q.length} questions, tous modules</span></span></button>
     <button class="action" onclick="startQuiz('mistakes')" ${mist ? '' : 'disabled'}><span class="ic red">${ic('redo')}</span><span><b>Revoir mes erreurs</b><span>${mist ? mist + ' question' + (mist > 1 ? 's' : '') : 'Aucune pour l\'instant'}</span></span></button>
   </div>
-  ${coursSection()}
   <div class="section-title"><h3>Modules</h3><a href="#" onclick="settings();return false">${ic('gear')} Paramètres</a></div><div class="grid">`;
   for (const m of DATA.modules) {
     const qs = m.steps.filter(isQ), nv = m.steps.filter(s => s.type === 'video').length;
