@@ -433,14 +433,14 @@ button,a,.opt,.step,.action,.mod,.cchap{touch-action:manipulation}
 .vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
 .vcard{display:flex;flex-direction:column;text-align:left;padding:0;border-radius:14px;overflow:hidden;cursor:pointer;color:var(--ink);font:inherit;background:var(--glass2);border:1px solid rgba(255,255,255,.13);box-shadow:inset 0 1px 0 rgba(255,255,255,.16);transition:transform .15s,border-color .15s;touch-action:manipulation}
 .vcard:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.3)}
-.vthumb{position:relative;aspect-ratio:16/9;background:linear-gradient(135deg,#1b2b47,#0d1626);display:block}
+.vthumb{position:relative;aspect-ratio:16/9;background:#0f2a57 url(media/thumb-plane.svg) center/cover no-repeat;display:block}
 .vthumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .vplay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:rgba(10,16,28,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.35);color:#fff}
 .vplay svg.i{width:18px;height:18px;fill:#fff;stroke:#fff}
 .vseen,.vsoon{position:absolute;top:8px;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:99px;display:inline-flex;align-items:center;gap:4px}
 .vseen{right:8px;background:var(--ok);color:#fff}.vseen svg.i{width:12px;height:12px}
 .vsoon{left:8px;background:rgba(0,0,0,.55);color:#cfd8e6}
-.vcard.off .vthumb{filter:saturate(.3) brightness(.8)}
+.vcard.off .vthumb{filter:saturate(.35) brightness(.75)}
 .vcard.seen .vplay{opacity:.75}
 .vtxt{display:flex;flex-direction:column;gap:3px;padding:10px 12px 12px}
 .vtxt b{font-size:14.5px;line-height:1.3}

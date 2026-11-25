@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice">
+  <!-- miniature des vidéos sans image YouTube : même univers que le logo (ciel de nuit, soleil, avion vu de dessus) -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1f4f99"/>
+      <stop offset=".6" stop-color="#0f2a57"/>
+      <stop offset="1" stop-color="#081427"/>
+    </linearGradient>
+    <radialGradient id="sun" cx=".12" cy=".18" r=".7">
+      <stop offset="0" stop-color="#ffd27a" stop-opacity=".9"/>
+      <stop offset=".22" stop-color="#ff9a3c" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#ff7a1a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="jet" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="1" stop-color="#cfdcf2"/>
+    </linearGradient>
+    <linearGradient id="trail" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".7"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="180" fill="url(#sky)"/>
+  <rect width="320" height="180" fill="url(#sun)"/>
+  <!-- étoiles -->
+  <g fill="#fff">
+    <circle cx="210" cy="22" r=".9" opacity=".7"/><circle cx="288" cy="40" r="1.1" opacity=".55"/><circle cx="250" cy="12" r=".7" opacity=".6"/>
+    <circle cx="300" cy="96" r=".8" opacity=".45"/><circle cx="182" cy="44" r=".7" opacity=".5"/><circle cx="96" cy="30" r=".6" opacity=".35"/>
+  </g>
+  <!-- horizon : courbure de la Terre -->
+  <path d="M-40 150 Q160 98 360 150 L360 200 L-40 200 Z" fill="#081427" fill-opacity=".45"/>
+  <path d="M-40 150 Q160 98 360 150" fill="none" stroke="#7fc4ff" stroke-opacity=".55" stroke-width="1.6"/>
+  <path d="M-40 150 Q160 98 360 150" fill="none" stroke="#7fc4ff" stroke-opacity=".18" stroke-width="6"/>
+  <!-- avion en montée vers la droite, avec ses traînées -->
+  <g transform="translate(246 70) rotate(52) scale(.2) translate(-256 -260)">
+    <path d="M128 336 L92 760" stroke="url(#trail)" stroke-width="12" stroke-linecap="round"/>
+    <path d="M384 336 L420 760" stroke="url(#trail)" stroke-width="12" stroke-linecap="round"/>
+    <path fill="url(#jet)" d="M256 84 C267 104 273 136 275 168 L277 212 L300 234 L300 212 L314 212 L314 250 L398 322 L398 348 L283 320 L281 352 L320 382 L320 402 L263 389 L256 410 L249 389 L192 402 L192 382 L231 352 L229 320 L114 348 L114 322 L198 250 L198 212 L212 212 L212 234 L235 212 L237 168 C239 136 245 104 256 84 Z"/>
+    <path d="M246 150 Q256 128 266 150 L264 186 L248 186 Z" fill="#0f2a57" fill-opacity=".75"/>
+  </g>
+</svg>
