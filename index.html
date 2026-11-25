@@ -476,13 +476,8 @@ function chooser() {
     const sub = d ? `${d.modules.filter(m => !m.assessment).length} modules · ${qs.length} questions${good ? ` · ${good} maîtrisées` : ''}` : 'Contenu pas encore importé';
     return d ? card(`openFormation('${k}')`, k === 'securite' ? 'blue' : 'red', f.icon, `Module ${f.label}`, sub) : '';
   }).join('');
-  const cours = forms.map(([k, f]) => {
-    // cours de la formation = partie du manuel rattachée au test final
-    const all = f.data && f.data.modules.find(m => m.assessment && hasCours(m.id));
-    const man = all && COURS.mods[all.id].map(x => COURS.docs[x]).find(x => x.kind === 'manuel');
-    return man ? card(`openCours(${all.id},null,null,'Cours ${f.label} · Manuel',['manuel'])`, 'blue', 'book', `Cours ${f.label}`, `Manuel CCA pratique · ${docRange(man)}`) : '';
-  }).join('') + [[1, 'recap', 'Fiches récap secourisme', 'Les fiches de l\'école, un geste par fiche', 'red'], [2, 'fiche', 'Fiches de révision Enzo', 'Fiches 0 à 17 · sécurité et secourisme', 'amber']]
-    .filter(([id]) => hasCours(id)).map(([id, kind, t, s, col]) => card(`openCours(${id},null,null,'${t.replace(/'/g, "\\'")}')`, col, KIND_IC[kind], t, `${s} · ${COURS.docs[COURS.mods[id][0]].pages.length} pages`)).join('');
+  const cours = (hasCours(3) ? card(`openCours(3,null,null,'Manuel CCA PRATIQUE')`, 'blue', 'book', 'Manuel CCA PRATIQUE', `Sécurité et secourisme · ${COURS.docs['3-manuel'].pages.length} pages`) : '') + [[1, 'recap', 'Fiches récap secourisme', 'Les fiches de l\'école, un geste par fiche', 'red'], [2, 'fiche', 'Fiches de révision Enzo', 'Fiches 0 à 17 · sécurité et secourisme', 'amber']]
+    .filter(([id]) => hasCours(id)).map(([id, kind, t, s, col]) => card(`openCours(${id},null,null,'${t.replace(/'/g, "\\'")}')`, col, KIND_IC[kind], t, `${s} · ${COURS.docs[COURS.mods[id][0]].pages.length} pages`, kind === 'fiche' ? 'wide' : '')).join('');
   const train = forms.map(([k, f]) => {
     const d = f.data, n = d ? d.modules.reduce((a, m) => a + m.steps.filter(isQ).length, 0) + ((window.QUESTIONS_COURS || {})[k] || []).length : 0;
     return d ? card(`openFormation('${k}');trainSetup(true)`, 'amber', 'target', `Entraînement ${f.label}`, `${n} questions · mode révision ou examen`, 'train') : '';
@@ -544,6 +539,17 @@ const COURS = window.COURS || null;
 const hasCours = id => !!(COURS && COURS.mods[id] && COURS.mods[id].length);
 let CV = null; // { mod, doc, page } : panneau ouvert
 const KIND_IC = { manuel:'book', recap:'doc', fiche:'list' };
+// « Manuel CCA PRATIQUE » du menu principal (id 3) : parties sécurité (5692) + secourisme (5025) du manuel, fusionnées
+if (COURS && !COURS.mods[3]) {
+  const parts = [5692, 5025].map(id => COURS.docs[id + '-manuel']).filter(Boolean);
+  if (parts.length) {
+    const m = new Map();
+    for (const d of parts) d.pages.forEach((p, i) => { if (!m.has(p)) m.set(p, [d.printed[i], d.labels[i]]); });
+    const pages = [...m.keys()].sort((a, b) => a - b);
+    COURS.docs['3-manuel'] = { ...parts[0], pages, printed: pages.map(p => m.get(p)[0]), labels: pages.map(p => m.get(p)[1]) };
+    COURS.mods[3] = ['3-manuel'];
+  }
+}
 function docName(d) {
   if (d.kind === 'manuel') return 'Manuel';
   if (d.kind === 'recap') return 'Fiches récap';
