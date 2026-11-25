@@ -20,8 +20,8 @@
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
 }}
 /* ----- image de fond (paysage = PC, portrait = téléphone) ----- */
-:root{--bg-blur:2px;--veil:rgba(238,242,248,.45);--glass:rgba(255,255,255,.66)}
-@media (prefers-color-scheme:dark){:root{--veil:rgba(8,13,22,.26);--glass:rgba(22,31,45,.58)}}
+:root{--bg-blur:2px;--veil:rgba(238,242,248,.45);--glass:rgba(255,255,255,.5)}
+@media (prefers-color-scheme:dark){:root{--veil:rgba(8,13,22,.26);--glass:rgba(22,31,45,.42)}}
 #bgimg{position:fixed;inset:0;z-index:-2;background:#0c121c url("media/bg-avion.png") center/cover no-repeat;filter:blur(var(--bg-blur));transform:scale(1.06)}
 @media (orientation:portrait){#bgimg{background-image:url("media/bg-mobile.png");background-position:center 40%}}
 #veil{position:fixed;inset:0;z-index:-1;background:var(--veil)}
