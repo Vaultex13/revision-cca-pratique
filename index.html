@@ -20,8 +20,9 @@
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
 }}
 /* ----- image de fond (paysage = PC, portrait = téléphone) ----- */
-:root{--bg-blur:2px;--veil:rgba(238,242,248,.45);--glass:rgba(255,255,255,.5)}
-@media (prefers-color-scheme:dark){:root{--veil:rgba(8,13,22,.26);--glass:rgba(22,31,45,.42)}}
+:root{--bg-blur:2px;--veil:rgba(238,242,248,.45);--glass:rgba(255,255,255,.5);--glass2:rgba(255,255,255,.55)}
+@media (prefers-color-scheme:dark){:root{--veil:rgba(8,13,22,.26);--glass:rgba(22,31,45,.42);--glass2:rgba(22,31,45,.5)}}
+.hero .stat{background:rgba(10,18,32,.3)!important}
 #bgimg{position:fixed;inset:0;z-index:-2;background:#0c121c url("media/bg-avion.png") center/cover no-repeat;filter:blur(var(--bg-blur));transform:scale(1.06)}
 @media (orientation:portrait){#bgimg{background-image:url("media/bg-mobile.png");background-position:center 40%}}
 #veil{position:fixed;inset:0;z-index:-1;background:var(--veil)}
@@ -350,6 +351,9 @@ body.session .menu-btn{display:inline-flex}
   body.session #side{position:fixed;left:0;z-index:20;box-shadow:4px 0 24px rgba(0,0,0,.25)}
   body.session:not(.side-closed)::after{content:"";position:fixed;inset:var(--topbar-h,58px) 0 0 0;background:rgba(0,0,0,.35);z-index:15}
 }
+/* boîtes intérieures (boutons, propositions, encadrés) : semi-transparentes aussi ; le panneau Cours reste opaque.
+   En fin de feuille pour passer devant les fonds de base ; les états (sélection, juste/faux) plus précis gardent leur couleur. */
+.btn:not(.primary),.opt,.ans-item,.order-item,.order-item .mv,.desc,.set-row,.report details,.seg label,.modebox label,.match-row select{background-color:var(--glass2)}
 </style>
 </head>
 <body>
