@@ -6,17 +6,17 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Révision CCA PRATIQUE</title>
 <style>
-/* un seul thème (sombre), quel que soit le réglage clair/sombre de l'appareil */
+/* un seul thème (clair), quel que soit le réglage clair/sombre de l'appareil */
 :root{
-  color-scheme:dark;
-  --bg:#0c121c;--bg2:#121a27;--card:#161f2d;--ink:#e7edf7;--mute:#93a1b8;--line:#263247;
-  --brand:#a9c3ff;--brand2:#5d8ef0;--accent:#f0b75a;--sky1:#0a1630;--sky2:#1b3c78;
-  --ok:#4cc38a;--okbg:#12301f;--ko:#ff7d70;--kobg:#3a1a18;--warn:#f0b75a;--warnbg:#36280f;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  color-scheme:light;
+  --bg:#eef2f8;--bg2:#e4eaf4;--card:#ffffff;--ink:#14213a;--mute:#5d6b84;--line:#dbe2ee;
+  --brand:#16305e;--brand2:#2457b8;--accent:#e9a23b;--sky1:#0f2347;--sky2:#24539e;
+  --ok:#17874c;--okbg:#e5f5ec;--ko:#c23a2f;--kobg:#fcebea;--warn:#a5650c;--warnbg:#fff1d9;
+  --shadow:0 1px 2px rgba(16,32,64,.06),0 6px 20px rgba(16,32,64,.07);
   --radius:16px;
 }
 /* ----- image de fond (paysage = PC, portrait = téléphone) ----- */
-:root{--bg-blur:2px;--veil:rgba(8,13,22,.26);--glass:rgba(22,31,45,.42);--glass2:rgba(255,255,255,.07)}
+:root{--bg-blur:2px;--veil:rgba(238,242,248,.12);--glass:rgba(255,255,255,.5);--glass2:rgba(255,255,255,.5)}
 .hero .stat{background:rgba(10,18,32,.3)!important}
 #bgimg{position:fixed;inset:0;z-index:-2;background:#0c121c url("media/bg-avion.png") center/cover no-repeat;filter:blur(var(--bg-blur));transform:scale(1.06)}
 @media (orientation:portrait){#bgimg{background-image:url("media/bg-mobile.png");background-position:center 40%}}
@@ -29,7 +29,7 @@ html{background:var(--bg)}
    2) liseré spéculaire : bord lumineux en haut à gauche, reflet plus faible en bas à droite (::after masqué en anneau)
    3) relief : ombre interne claire sur le bord haut, sombre sur le bord bas, ombre portée douce
    4) réfraction des bords (Chrome/Edge seulement) : filtre SVG de déplacement généré par taille de boîte (script lgInit) */
-:root{--lg-tint:rgba(14,20,32,.22);--lg-blur:7px;--lg-rim:rgba(255,255,255,.62);--lg-rim2:rgba(255,255,255,.26)}
+:root{--lg-tint:rgba(255,255,255,.55);--lg-blur:8px;--lg-rim:rgba(255,255,255,.95);--lg-rim2:rgba(255,255,255,.55)}
 .mbox,.action,.mod,.qcard,.cchap,.hero .stat,body.session #side{
   --lg-bf:blur(var(--lg-blur)) saturate(190%) brightness(1.08);
   background:radial-gradient(120% 80% at 0% 0%,rgba(255,255,255,.10),rgba(255,255,255,0) 55%),var(--lg-tint)!important;
@@ -369,6 +369,11 @@ body.session .menu-btn{display:inline-flex}
    En fin de feuille pour passer devant les fonds de base ; les états (sélection, juste/faux) plus précis gardent leur couleur. */
 .btn:not(.primary),.opt,.ans-item,.order-item,.order-item .mv,.desc,.set-row,.report details,.seg label,.modebox label,.match-row select{background-color:var(--glass2);border-color:rgba(255,255,255,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(0,0,0,.12)}
 .mbox,.action,.mod,.qcard,.cchap,.hero .stat,body.session #side{border-color:var(--lg-edge)}
+/* textes posés directement sur la photo (hors des boîtes) : blancs avec ombre pour rester lisibles */
+.hero p{opacity:1;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+.section-title h3,.section-title a,.foot{color:#fff!important;text-shadow:0 1px 6px rgba(0,0,0,.65)}
+.hero .stat{color:var(--ink);text-shadow:none}
+body.session #side{--lg-tint:rgba(255,255,255,.74)}
 </style>
 </head>
 <body>
