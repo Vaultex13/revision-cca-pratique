@@ -29,7 +29,14 @@
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 html{background:var(--bg)}
-.action,.mod,.qcard,body.session #side{background:var(--glass)!important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+/* « liquid glass » : teinte légère + reflet en diagonale, flou saturé, liseré lumineux en haut */
+:root{--lg-tint:rgba(255,255,255,.26);--lg-edge:rgba(255,255,255,.65);--lg-hi:rgba(255,255,255,.7);--lg-sheen:rgba(255,255,255,.22)}
+@media (prefers-color-scheme:dark){:root{--lg-tint:rgba(16,24,38,.26);--lg-edge:rgba(255,255,255,.2);--lg-hi:rgba(255,255,255,.32);--lg-sheen:rgba(255,255,255,.12)}}
+.mbox,.action,.mod,.qcard,.cchap,.hero .stat,body.session #side{
+  background:linear-gradient(135deg,var(--lg-sheen) 0%,rgba(255,255,255,.03) 38%,rgba(255,255,255,0) 62%,rgba(255,255,255,.07) 100%),var(--lg-tint)!important;
+  backdrop-filter:blur(18px) saturate(185%) brightness(1.06);-webkit-backdrop-filter:blur(18px) saturate(185%) brightness(1.06);
+  box-shadow:inset 0 1px 0 var(--lg-hi),inset 0 -1px 0 rgba(255,255,255,.06),inset 0 0 18px rgba(255,255,255,.04),0 10px 30px rgba(0,0,0,.26)!important}
+.action:hover:not(:disabled),.mod:hover,.cchap:hover{background:linear-gradient(135deg,rgba(255,255,255,.28) 0%,rgba(255,255,255,.06) 40%,rgba(255,255,255,.02) 62%,rgba(255,255,255,.1) 100%),var(--lg-tint)!important}
 .topbar{background:linear-gradient(135deg,rgba(15,35,71,.72),rgba(36,83,158,.55))!important;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .hero{background:transparent!important;text-shadow:0 1px 10px rgba(0,0,0,.55)}
 .hero::after{display:none}
@@ -353,7 +360,8 @@ body.session .menu-btn{display:inline-flex}
 }
 /* boîtes intérieures (boutons, propositions, encadrés) : semi-transparentes aussi ; le panneau Cours reste opaque.
    En fin de feuille pour passer devant les fonds de base ; les états (sélection, juste/faux) plus précis gardent leur couleur. */
-.btn:not(.primary),.opt,.ans-item,.order-item,.order-item .mv,.desc,.set-row,.report details,.seg label,.modebox label,.match-row select{background-color:var(--glass2)}
+.btn:not(.primary),.opt,.ans-item,.order-item,.order-item .mv,.desc,.set-row,.report details,.seg label,.modebox label,.match-row select{background-color:var(--glass2);box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+.mbox,.action,.mod,.qcard,.cchap,.hero .stat,body.session #side{border-color:var(--lg-edge)}
 </style>
 </head>
 <body>
