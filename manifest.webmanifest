@@ -1,0 +1,16 @@
+{
+  "name": "Révision CCA PRATIQUE",
+  "short_name": "CCA PRATIQUE",
+  "description": "Révision sécurité et secourisme : modules, quiz, cours",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0c121c",
+  "theme_color": "#0c121c",
+  "icons": [
+    { "src": "media/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "media/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "media/logo.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
