@@ -452,6 +452,13 @@ button,a,.opt,.step,.action,.mod,.cchap{touch-action:manipulation}
 .vplay-body .nav .btn{max-width:48%;min-width:0}
 .vplay-body .nav .btn .hide-sm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .show-sm{display:none}
+.lbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:12px;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--brand2) 16%,rgba(14,20,32,.5));border:1px solid color-mix(in srgb,var(--brand2) 45%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.lbar.ok{background:color-mix(in srgb,var(--ok) 12%,rgba(14,20,32,.5));border-color:color-mix(in srgb,var(--ok) 40%,transparent)}
+.lbar>svg.i{width:22px;height:22px;flex:none;color:var(--brand2)}.lbar.ok>svg.i{color:var(--ok)}
+.lbar>span{flex:1;min-width:180px;display:flex;flex-direction:column;gap:2px}
+.lbar small{color:var(--mute);font-size:12.5px}.lbar code{font-size:12px}
+.lbar .btn{flex:none}
+.lwarn{flex-basis:100%;color:var(--ko);font-size:13px}
 @media (max-width:600px){.show-sm{display:inline}.vplay-body{padding:0 12px 14px}.vgrid{grid-template-columns:1fr 1fr;gap:10px}.vtxt b{font-size:13.5px}.vtxt{padding:8px 10px 10px}.vgroup h3 em{display:none}}
 @media (max-width:360px){.vgrid{grid-template-columns:1fr}}
 @media (hover:none){.vcard:hover{transform:none;border-color:rgba(255,255,255,.13)}.vcard:active{transform:scale(.985)}}
@@ -644,9 +651,72 @@ function videoList() {
   return VIDS = out;
 }
 const LOCAL = /^(localhost|127\.0\.0\.1)$|^$/.test(location.hostname);
-const vAvail = v => !!v.youtubeId || LOCAL;
+// Vidéos pas encore sur YouTube : lues depuis le dossier « videos » de ce PC (Chrome/Edge, API File System Access).
+// Le dossier est choisi une fois ; son accès est gardé dans IndexedDB. Rien n'est envoyé en ligne : lecture locale (blob:).
+const FSA = !LOCAL && 'showDirectoryPicker' in window;
+let LDIR = null, LSET = new Set(), LSTATE = FSA ? 'none' : 'off'; // none | prompt | ok | off
+function idb(mode, fn) {
+  return new Promise((res, rej) => { const r = indexedDB.open('cca-local', 1); r.onupgradeneeded = () => r.result.createObjectStore('h');
+    r.onsuccess = () => { const t = r.result.transaction('h', mode), q = fn(t.objectStore('h')); t.oncomplete = () => res(q && q.result); t.onerror = () => rej(t.error); }; r.onerror = () => rej(r.error); });
+}
+async function lScan(h) {
+  LDIR = h; LSET = new Set();
+  for await (const [n, e] of h.entries()) if (e.kind === 'file' && /\.mp4$/i.test(n)) LSET.add(n);
+  LSTATE = 'ok'; VIDS = null;
+}
+// au chargement : dossier déjà relié et autorisé → vidéos dispo ; sinon un clic suffira (Chrome redemande l'accès)
+async function lInit() {
+  if (!FSA) return;
+  try { const h = await idb('readonly', s => s.get('videos')); if (!h) return;
+    LDIR = h; if (await h.queryPermission({ mode:'read' }) === 'granted') await lScan(h); else LSTATE = 'prompt';
+  } catch (e) {}
+  lRefresh();
+}
+async function lLink() {
+  try {
+    let h = LDIR;
+    if (h && LSTATE === 'prompt') { if (await h.requestPermission({ mode:'read' }) !== 'granted') return; }
+    else { h = await showDirectoryPicker({ id:'cca-videos', mode:'read' }); await idb('readwrite', s => s.put(h, 'videos')); }
+    await lScan(h);
+    if (!LSET.size) { LSTATE = 'none'; alertBox('Aucune vidéo .mp4 dans ce dossier. Choisis le dossier « videos » du projet revision-CCA.'); }
+  } catch (e) { if (e.name !== 'AbortError') console.warn(e); }
+  lRefresh();
+}
+async function lForget() { try { await idb('readwrite', s => s.delete('videos')); } catch (e) {} LDIR = null; LSET = new Set(); LSTATE = 'none'; VIDS = null; lRefresh(); }
+function alertBox(msg) { const b = document.getElementById('lbar'); if (b) b.insertAdjacentHTML('beforeend', `<span class="lwarn">${esc(msg)}</span>`); }
+function lRefresh() {
+  if (document.getElementById('vlist')) openVideos(true);
+  else if (S && app.querySelector('[data-lf]')) fillLocal(app);
+  else if (!S && !FK && document.querySelector('.menu')) chooser();
+}
+function lBar() {
+  if (!FSA) return '';
+  const miss = videoList().filter(v => !v.youtubeId).length;
+  if (!miss) return '';
+  if (LSTATE === 'ok') return `<div class="lbar ok" id="lbar">${ic('check')}<span><b>Vidéos de ce PC reliées</b><small>${miss} vidéos pas encore sur YouTube sont lues depuis ton disque (sur ce PC uniquement)</small></span><button class="btn" onclick="lForget()">Délier</button></div>`;
+  if (LSTATE === 'prompt') return `<div class="lbar" id="lbar">${ic('pcircle')}<span><b>${miss} vidéos sur ce PC</b><small>Chrome demande de réautoriser l'accès au dossier vidéos</small></span><button class="btn primary" onclick="lLink()">Réactiver</button></div>`;
+  return `<div class="lbar" id="lbar">${ic('pcircle')}<span><b>${miss} vidéos pas encore sur YouTube</b><small>Sur ce PC, relie le dossier <code>revision-CCA\\videos</code> pour les lire depuis le disque</small></span><button class="btn primary" onclick="lLink()">Relier le dossier</button></div>`;
+}
+// remplace les <video data-lf="fichier"> par la vidéo lue depuis le disque
+let LURLS = [];
+async function fillLocal(root) {
+  for (const el of root.querySelectorAll('video[data-lf]')) {
+    const n = el.dataset.lf; el.removeAttribute('data-lf');
+    try { const f = await (await LDIR.getFileHandle(n)).getFile(), u = URL.createObjectURL(f); LURLS.push(u); el.src = u; } catch (e) { el.closest('.video-box').outerHTML = '<div class="desc">Vidéo introuvable dans le dossier relié.</div>'; }
+  }
+}
+function freeLocal() { LURLS.forEach(u => URL.revokeObjectURL(u)); LURLS = []; }
+// lecteur d'une vidéo sans lien YouTube : fichier du serveur local, du dossier relié, ou message
+function localPlayer(file, autoplay) {
+  if (LOCAL) return `<div class="video-box"><video controls ${autoplay ? 'autoplay' : ''} preload="metadata" src="videos/${encodeURIComponent(file)}"></video></div>`;
+  if (LSTATE === 'ok' && LSET.has(file)) return `<div class="video-box"><video controls ${autoplay ? 'autoplay' : ''} preload="metadata" data-lf="${esc(file)}"></video></div>`;
+  if (LSTATE === 'prompt') return `<div class="desc">Vidéo disponible sur ce PC : <button class="btn primary" onclick="lLink()">Réactiver l'accès au dossier vidéos</button></div>`;
+  return `<div class="desc">Vidéo bientôt disponible.${FSA ? ' Sur ce PC, tu peux relier le dossier vidéos depuis la Vidéothèque.' : ''}</div>`;
+}
+const vAvail = v => !!v.youtubeId || LOCAL || (LSTATE === 'ok' && LSET.has(v.video));
 let VF = { f:'all', q:'' }; // filtre de la vidéothèque
-function openVideos() {
+function openVideos(keep) {
+  const y = scrollY;
   S = null; setFormation(null);
   DATA = FORMATIONS.general ? FORMATIONS.general.data : null; // pour les renvois au cours (noms des modules)
   history.replaceState(null, '', '#videos');
@@ -668,12 +738,12 @@ function openVideos() {
   app.innerHTML = `<div class="vbar"><span class="seg" id="vf">${[['all', 'Tout'], ['securite', 'Sécurité'], ['secourisme', 'Secourisme']].map(([k, l]) =>
       `<label><input type="radio" name="vf" value="${k}" ${VF.f === k ? 'checked' : ''}>${l}</label>`).join('')}</span>
     <input type="search" id="vq" placeholder="Rechercher une vidéo (ex. extincteur, RCP)" value="${esc(VF.q)}" autocomplete="off"></div>
-    <div class="vjump" id="vjump"></div><div id="vlist"></div>
+    ${lBar()}<div class="vjump" id="vjump"></div><div id="vlist"></div>
     <div class="foot">Usage personnel · contenu Aeroschool · vidéos non répertoriées</div>`;
   document.querySelectorAll('#vf input').forEach(i => i.onchange = () => { VF.f = i.value; vRender(); });
   const q = document.getElementById('vq'); q.oninput = () => { VF.q = q.value; vRender(); };
   vRender();
-  scrollTo(0, 0);
+  scrollTo(0, keep ? y : 0);
 }
 const vNorm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 function vFiltered() {
@@ -696,7 +766,7 @@ function vCard(v, W) {
   const ok = vAvail(v), seenIt = W[v.video];
   return `<button class="vcard ${ok ? '' : 'off'} ${seenIt ? 'seen' : ''}" onclick="playVideo('${v.video}')">
     <span class="vthumb">${v.youtubeId ? `<img src="https://i.ytimg.com/vi/${v.youtubeId}/mqdefault.jpg" alt="" loading="lazy">` : ''}
-      <span class="vplay">${ic(ok ? 'play' : 'x')}</span>${seenIt ? `<span class="vseen">${ic('check')}Vue</span>` : ''}${ok ? '' : '<span class="vsoon">Bientôt</span>'}</span>
+      <span class="vplay">${ic(ok ? 'play' : 'x')}</span>${seenIt ? `<span class="vseen">${ic('check')}Vue</span>` : ''}${!ok ? '<span class="vsoon">Bientôt</span>' : !v.youtubeId && !LOCAL ? '<span class="vsoon">Sur ce PC</span>' : ''}</span>
     <span class="vtxt"><b>${esc(v.vt)}</b><small>${esc(v.modName.replace(/^Module (\d) · .*/, 'Secourisme · module $1'))}</small></span></button>`;
 }
 function playVideo(file) {
@@ -709,8 +779,7 @@ function playVideo(file) {
   if (!ov) { ov = document.createElement('div'); ov.id = 'vplay'; ov.className = 'cours-ov'; ov.onclick = e => { if (e.target === ov) closeVideo(); }; document.body.appendChild(ov); }
   const player = v.youtubeId
     ? `<div class="yt-box"><iframe src="https://www.youtube-nocookie.com/embed/${v.youtubeId}?autoplay=1&rel=0" title="${esc(v.vt)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`
-    : LOCAL ? `<div class="video-box"><video controls autoplay preload="metadata" src="videos/${encodeURIComponent(v.video)}"></video></div>`
-    : `<div class="desc" style="margin-top:14px">Cette vidéo n'est pas encore en ligne. Elle sera bientôt disponible.</div>`;
+    : localPlayer(v.video, true);
   ov.innerHTML = `<div class="cours-in vplay-in" role="dialog" aria-label="Vidéo">
     <div class="cours-head"><span class="cours-t">${ic('play')}${esc(v.vt)}</span>
       <button class="side-x" onclick="closeVideo()" aria-label="Fermer la vidéo">${ic('x')}</button></div>
@@ -721,9 +790,10 @@ function playVideo(file) {
       <div class="nav">${prevV ? `<button class="btn" onclick="playVideo('${prevV.video}')">${ic('back')}<span class="hide-sm">${esc(prevV.vt)}</span><span class="show-sm">Précédente</span></button>` : '<span></span>'}
         ${nextV ? `<button class="btn primary" onclick="playVideo('${nextV.video}')"><span class="hide-sm">${esc(nextV.vt)}</span><span class="show-sm">Suivante</span>${ic('next')}</button>` : ''}</div></div></div>`;
   document.body.classList.add('cours-open');
+  freeLocal(); fillLocal(ov);
 }
 function closeVideo() {
-  const ov = document.getElementById('vplay'); if (ov) ov.remove();
+  const ov = document.getElementById('vplay'); if (ov) ov.remove(); freeLocal();
   if (!CV) document.body.classList.remove('cours-open');
   if (document.getElementById('vlist')) vRender(); // pastilles « Vue » à jour
 }
@@ -1051,9 +1121,7 @@ function render() {
       ${it.description ? `<div class="desc">${it.description}</div>` : ''}
       ${it.youtubeId
         ? `<div class="yt-box"><iframe src="https://www.youtube-nocookie.com/embed/${it.youtubeId}" title="${esc(it.title)}" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`
-        : /^(localhost|127\.0\.0\.1)$|^$/.test(location.hostname)
-          ? `<div class="video-box"><video controls preload="metadata" src="videos/${encodeURIComponent(it.video)}"></video></div>`
-          : `<div class="desc">Vidéo bientôt disponible.</div>`}
+        : localPlayer(it.video, false)}
       ${coursRefs(it, it.mod || S.modId)}`;
   else if (it.type === 'page') body = `<div class="kicker"><span class="type">${ic('book')}Cours</span></div><h2 class="q-title">${esc(it.title)}</h2>
       <div class="intro">${it.html || ''}</div>
@@ -1067,6 +1135,7 @@ function render() {
   app.innerHTML = `<div class="qcard">${body}<div id="fb"></div>
     <div class="nav"><button class="btn" onclick="prev()" ${S.i ? '' : 'disabled'}>${ic('back')}Précédent</button>${nextBtn}</div></div>`;
   if (isQ(it)) { bindQ(it); document.getElementById('check').onclick = () => S.answered ? next() : check(it); }
+  freeLocal(); fillLocal(app);
   scrollTo(0, 0);
 }
 // ----- quitter : confirmation avant de revenir à l'accueil (tous les modes) -----
@@ -1295,6 +1364,7 @@ document.addEventListener('keydown', e => {
 // #securite / #secourisme dans l'adresse : on rouvre directement la formation (rafraîchissement, favori)
 const startKey = location.hash.slice(1);
 if (startKey === 'videos') openVideos(); else if (FORMATIONS[startKey] && FORMATIONS[startKey].data) openFormation(startKey); else chooser();
+lInit();
 addEventListener('hashchange', () => { const k = location.hash.slice(1); if (k === 'videos') { if (!document.getElementById('vlist')) openVideos(); return; } if (k !== (FK || '')) { if (FORMATIONS[k] && FORMATIONS[k].data) openFormation(k); else chooser(); } });
 </script>
 <script>
