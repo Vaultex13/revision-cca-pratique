@@ -653,8 +653,21 @@ function videoList() {
 const LOCAL = /^(localhost|127\.0\.0\.1)$|^$/.test(location.hostname);
 // Vidéos pas encore sur YouTube : lues depuis le dossier « videos » de ce PC (Chrome/Edge, API File System Access).
 // Le dossier est choisi une fois ; son accès est gardé dans IndexedDB. Rien n'est envoyé en ligne : lecture locale (blob:).
-const FSA = !LOCAL && 'showDirectoryPicker' in window;
+// Firefox (et autres) : pas de dossier mémorisé → choix du dossier par <input webkitdirectory>, valable jusqu'à la fermeture de l'onglet
+const FSA_REAL = !LOCAL && 'showDirectoryPicker' in window;
+const FSA = FSA_REAL || (!LOCAL && 'webkitdirectory' in document.createElement('input') && !matchMedia('(hover:none)').matches);
 let LDIR = null, LSET = new Set(), LSTATE = FSA ? 'none' : 'off'; // none | prompt | ok | off
+let LFILES = null; // repli sans File System Access : nom → File
+function lPickInput() {
+  const inp = document.createElement('input'); inp.type = 'file'; inp.webkitdirectory = true; inp.multiple = true; inp.style.display = 'none';
+  inp.onchange = () => {
+    LFILES = new Map(); for (const f of inp.files) if (/\.mp4$/i.test(f.name)) LFILES.set(f.name, f);
+    inp.remove();
+    if (!LFILES.size) { LFILES = null; lRefresh(); return alertBox('Aucune vidéo .mp4 dans ce dossier. Choisis le dossier « videos » du projet revision-CCA.'); }
+    LSET = new Set(LFILES.keys()); LSTATE = 'ok'; VIDS = null; lRefresh();
+  };
+  document.body.appendChild(inp); inp.click();
+}
 function idb(mode, fn) {
   return new Promise((res, rej) => { const r = indexedDB.open('cca-local', 1); r.onupgradeneeded = () => r.result.createObjectStore('h');
     r.onsuccess = () => { const t = r.result.transaction('h', mode), q = fn(t.objectStore('h')); t.oncomplete = () => res(q && q.result); t.onerror = () => rej(t.error); }; r.onerror = () => rej(r.error); });
@@ -666,13 +679,14 @@ async function lScan(h) {
 }
 // au chargement : dossier déjà relié et autorisé → vidéos dispo ; sinon un clic suffira (Chrome redemande l'accès)
 async function lInit() {
-  if (!FSA) return;
+  if (!FSA_REAL) return;
   try { const h = await idb('readonly', s => s.get('videos')); if (!h) return;
     LDIR = h; if (await h.queryPermission({ mode:'read' }) === 'granted') await lScan(h); else LSTATE = 'prompt';
   } catch (e) {}
   lRefresh();
 }
 async function lLink() {
+  if (!FSA_REAL) return lPickInput();
   try {
     let h = LDIR;
     if (h && LSTATE === 'prompt') { if (await h.requestPermission({ mode:'read' }) !== 'granted') return; }
@@ -682,7 +696,7 @@ async function lLink() {
   } catch (e) { if (e.name !== 'AbortError') console.warn(e); }
   lRefresh();
 }
-async function lForget() { try { await idb('readwrite', s => s.delete('videos')); } catch (e) {} LDIR = null; LSET = new Set(); LSTATE = 'none'; VIDS = null; lRefresh(); }
+async function lForget() { if (FSA_REAL) try { await idb('readwrite', s => s.delete('videos')); } catch (e) {} LDIR = null; LFILES = null; LSET = new Set(); LSTATE = 'none'; VIDS = null; lRefresh(); }
 function alertBox(msg) { const b = document.getElementById('lbar'); if (b) b.insertAdjacentHTML('beforeend', `<span class="lwarn">${esc(msg)}</span>`); }
 function lRefresh() {
   if (document.getElementById('vlist')) openVideos(true);
@@ -695,14 +709,14 @@ function lBar() {
   if (!miss) return '';
   if (LSTATE === 'ok') return `<div class="lbar ok" id="lbar">${ic('check')}<span><b>Vidéos de ce PC reliées</b><small>${miss} vidéos pas encore sur YouTube sont lues depuis ton disque (sur ce PC uniquement)</small></span><button class="btn" onclick="lForget()">Délier</button></div>`;
   if (LSTATE === 'prompt') return `<div class="lbar" id="lbar">${ic('pcircle')}<span><b>${miss} vidéos sur ce PC</b><small>Chrome demande de réautoriser l'accès au dossier vidéos</small></span><button class="btn primary" onclick="lLink()">Réactiver</button></div>`;
-  return `<div class="lbar" id="lbar">${ic('pcircle')}<span><b>${miss} vidéos pas encore sur YouTube</b><small>Sur ce PC, relie le dossier <code>revision-CCA\\videos</code> pour les lire depuis le disque</small></span><button class="btn primary" onclick="lLink()">Relier le dossier</button></div>`;
+  return `<div class="lbar" id="lbar">${ic('pcircle')}<span><b>${miss} vidéos pas encore sur YouTube</b><small>Sur ce PC, relie le dossier <code>revision-CCA\\videos</code> pour les lire depuis le disque${FSA_REAL ? '' : ' (à refaire à chaque visite dans ce navigateur ; rien n\'est envoyé en ligne)'}</small></span><button class="btn primary" onclick="lLink()">Relier le dossier</button></div>`;
 }
 // remplace les <video data-lf="fichier"> par la vidéo lue depuis le disque
 let LURLS = [];
 async function fillLocal(root) {
   for (const el of root.querySelectorAll('video[data-lf]')) {
     const n = el.dataset.lf; el.removeAttribute('data-lf');
-    try { const f = await (await LDIR.getFileHandle(n)).getFile(), u = URL.createObjectURL(f); LURLS.push(u); el.src = u; } catch (e) { el.closest('.video-box').outerHTML = '<div class="desc">Vidéo introuvable dans le dossier relié.</div>'; }
+    try { const f = LFILES ? LFILES.get(n) : await (await LDIR.getFileHandle(n)).getFile(); if (!f) throw 0; const u = URL.createObjectURL(f); LURLS.push(u); el.src = u; } catch (e) { el.closest('.video-box').outerHTML = '<div class="desc">Vidéo introuvable dans le dossier relié.</div>'; }
   }
 }
 function freeLocal() { LURLS.forEach(u => URL.revokeObjectURL(u)); LURLS = []; }
