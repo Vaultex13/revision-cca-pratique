@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-title" content="CCA PRATIQUE">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <!-- aperçu quand on partage le lien (WhatsApp, Messenger, SMS…) : adresses absolues obligatoires -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Révision CCA PRATIQUE">
@@ -245,7 +245,13 @@ main.narrow{max-width:820px}
 .cchap b{display:block;font-size:13.5px;line-height:1.25}
 .cchap small{color:var(--mute);font-size:12px}
 .section-title h3{display:inline-flex;align-items:center;gap:8px}
-@media (max-width:600px){.hide-sm{display:none}}
+@media (max-width:600px){.hide-sm{display:none}
+  /* barre du haut sur téléphone : boutons en icône, titre qui se réduit, « Continuer » toujours entier à droite */
+  .topbar-in{padding:8px 10px;gap:8px}
+  .topbar h2{display:none}
+  .topbar .back{padding:8px 10px;flex:none}
+  .topbar .live{font-size:13px;flex:none}
+  .topbar .cont{padding:8px 12px;margin-left:auto}}
 body.cours-open{overflow:hidden}
 @media (max-width:600px){.cours-ov{padding:0}.cours-in{border-radius:0}}
 .intro blockquote{margin:12px 0;padding:10px 14px;border-left:4px solid var(--accent);background:var(--bg2);border-radius:10px}
@@ -809,7 +815,7 @@ function renderSide() {
 function goTo(i) { S.i = i; if (innerWidth <= 900) setSide(false); render(); }
 function topbar() {
   const pct = S.i >= S.items.length ? 100 : S.i / S.items.length * 100;
-  bar.innerHTML = `<div class="topbar"><div class="topbar-in"><button class="back menu-btn" onclick="setSide(!sideOpen)" aria-label="Menu">${ic('menu')}</button><button class="back" onclick="askQuit()">${ic('back')}Quitter</button>
+  bar.innerHTML = `<div class="topbar"><div class="topbar-in"><button class="back menu-btn" onclick="setSide(!sideOpen)" aria-label="Menu">${ic('menu')}</button><button class="back" onclick="askQuit()" aria-label="Quitter">${ic('back')}<span class="hide-sm">Quitter</span></button>
     <h2>CCA PRATIQUE ${F.label.toUpperCase()} – ${esc(S.title.toUpperCase())}</h2>
     ${(() => { const it = S.items[S.i], mid = (it && it.mod) || S.modId; if (!hasCours(mid)) return '';
       let r = it && COURS.q[it.sid] && COURS.q[it.sid][0];
