@@ -396,11 +396,6 @@ button,a,.opt,.step,.action,.mod,.cchap{touch-action:manipulation}
   .btn:hover:not(:disabled),.opt:hover,.ctab:hover,.cpg:hover{border-color:rgba(255,255,255,.14)}
   .step:hover,.side-x:hover{background:none}
   .action:active:not(:disabled),.mod:active,.cchap:active,.opt:active,.btn:active:not(:disabled){transform:scale(.985);transition:transform .08s}
-  /* le fond est déjà flou : pas de filtre plein écran recalculé à chaque image */
-  #bgimg{filter:none;transform:none}
-  /* boîtes imbriquées dans un cadre déjà en verre : un seul flou (le plus coûteux au défilement) */
-  .mbox .action,.mod,.cchap,.hero .stat{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;--lg-tint:rgba(22,31,45,.55)}
-  .mbox,.qcard,body.session #side{--lg-bf:blur(10px) saturate(170%)}
 }
 .mbox,.action,.mod,.qcard,.cchap,.hero .stat,body.session #side{border-color:var(--lg-edge)}
 </style>
@@ -1119,9 +1114,7 @@ addEventListener('hashchange', () => { const k = location.hash.slice(1); if (k !
 (function lgInit() {
   const brands = (navigator.userAgentData && navigator.userAgentData.brands) || [];
   if (!brands.some(b => /Chromium/.test(b.brand))) return;
-  if (matchMedia('(prefers-reduced-transparency: reduce)').matches) return;
-  if (matchMedia('(hover: none)').matches) return; // téléphone/tablette : trop coûteux au défilement
-  const SEL = '.mbox,.action,.mod,.qcard,.cchap,.hero .stat', NS = 'http://www.w3.org/2000/svg', SCALE = 56;
+  if (matchMedia('(prefers-reduced-transparency: reduce)').matches) return;  const SEL = '.mbox,.action,.mod,.qcard,.cchap,.hero .stat', NS = 'http://www.w3.org/2000/svg', SCALE = 56;
   const svg = document.createElementNS(NS, 'svg');
   svg.setAttribute('width', '0'); svg.setAttribute('height', '0'); svg.setAttribute('aria-hidden', 'true');
   svg.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
