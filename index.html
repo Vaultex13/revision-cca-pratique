@@ -235,6 +235,15 @@ main.narrow{max-width:820px}
 .cours-cur{padding:0 16px 8px;font-size:13px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:none}
 .cours-pdf{flex:1;width:100%;min-height:0;border:0;background:#525659}
 .cours-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.cours-links:empty{display:none}
+.mref{display:flex;align-items:center;gap:12px;margin-top:12px;padding:12px 14px;border-radius:14px;
+  background:color-mix(in srgb,var(--brand2) 16%,transparent);border:1px solid color-mix(in srgb,var(--brand2) 45%,transparent);box-shadow:inset 0 1px 0 rgba(255,255,255,.15)}
+.mref-ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--brand2) 30%,transparent);color:#fff}
+.mref-t{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1}
+.mref-t small{font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--brand);font-weight:700}
+.mref-t b{font-size:15.5px;color:var(--ink)}
+.mref-t span{font-size:13px;color:var(--mute);overflow-wrap:anywhere}
+.mref .btn{flex:none;padding:8px 12px;font-size:13.5px}
 .cours-links .btn{font-size:13.5px;padding:7px 12px}
 .cours-all{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:12px}
 .cours-chaps{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
@@ -657,12 +666,16 @@ function coursRefs(step, modId) {
   const refs = COURS && COURS.q[step.sid];
   if (!refs || !hasCours(modId)) return '';
   const order = { manuel:0, recap:1, fiche:2 };
-  return `<div class="cours-links">${refs.filter(r => COURS.mods[modId].includes(r.doc)).sort((a, b) => order[COURS.docs[a.doc].kind] - order[COURS.docs[b.doc].kind]).map((r, i) => {
+  const mine = refs.filter(r => COURS.mods[modId].includes(r.doc)).sort((a, b) => order[COURS.docs[a.doc].kind] - order[COURS.docs[b.doc].kind]);
+  // encadré « Dans ton manuel » : n° de page IMPRIMÉ dans le manuel papier (pas celui du PDF) + titre de la partie
+  const man = mine.find(r => COURS.docs[r.doc].kind === 'manuel');
+  const box = man ? manualBox(COURS.docs[man.doc], man.page, `openCours(${modId},'${man.doc}',${man.page})`) : '';
+  return box + `<div class="cours-links">${mine.filter(r => r !== man).map((r, i) => {
     const d = COURS.docs[r.doc], p = pshort(pnum(d, r.page));
     // n° de ma fiche : dernière page « Fiche N » avant (ou sur) la page visée
     const fno = d.kind === 'fiche' ? d.labels.slice(0, d.pages.indexOf(r.page) + 1).map(l => (/^Fiche (\d+)/.exec(l) || [])[1]).filter(Boolean).pop() : null;
     const label = d.kind === 'manuel' ? `Revoir dans le cours (manuel p. ${p})` : d.kind === 'recap' ? `Fiche récap p. ${p}` : fno ? `Ma fiche ${fno}` : `Mes fiches p. ${p}`;
-    return `<button class="btn ${i ? '' : 'primary'}" onclick="openCours(${modId},'${r.doc}',${r.page})">${ic(KIND_IC[d.kind])}${label}</button>`;
+    return `<button class="btn" onclick="openCours(${modId},'${r.doc}',${r.page})">${ic(KIND_IC[d.kind])}${label}</button>`;
   }).join('')}</div>`;
 }
 
@@ -676,11 +689,25 @@ function manualTarget(page, mid) {
   for (const m of Object.keys(COURS.mods)) if (keys(m)[0]) return [+m, keys(m)[0]];
   return null;
 }
+// titre de la partie du manuel pour une page (index PDF), d'après les intitulés relevés dans cours.js
+function manualSection(page) {
+  for (const k in (COURS || {}).docs || {}) { const d = COURS.docs[k]; if (d.kind !== 'manuel') continue; const i = d.pages.indexOf(page); if (i >= 0 && d.labels[i]) return d.labels[i]; }
+  return '';
+}
+function manualBox(d, page, onclick) {
+  const sec = manualSection(page);
+  return `<div class="mref"><span class="mref-ic">${ic('book')}</span><span class="mref-t"><small>À revoir dans ton manuel</small>
+    <b>Manuel CCA PRATIQUE · page ${esc(pshort(pnum(d, page)))}</b>${sec ? `<span>${esc(sec)}</span>` : ''}</span>
+    <button class="btn primary" onclick="${onclick}">${ic('book')}Ouvrir</button></div>`;
+}
 function qRefs(q, mid) {
   if (!q.cref || !q.cref.length) return coursRefs(q, mid);
   const t = manualTarget(q.cref[0].page, mid);
-  return q.cref.map((r, i) => `<div class="quote"><div class="src">${ic('book')}Manuel CCA pratique · p. ${esc(pshort(String(r.printed)))}</div>${r.quote ? `<q>${esc(r.quote)}</q>` : ''}
-    ${i === q.cref.length - 1 && t ? `<div><button class="btn" onclick="openCours(${t[0]},'${t[1]}',${q.cref[0].page},'Manuel CCA pratique')">${ic('book')}Ouvrir le manuel à cette page</button></div>` : ''}</div>`).join('');
+  const d = t && COURS.docs[t[1]];
+  // encadré page + partie (avec bouton), puis la ou les phrases exactes du manuel qui donnent la réponse
+  const box = d ? manualBox(d, q.cref[0].page, `openCours(${t[0]},'${t[1]}',${q.cref[0].page},'Manuel CCA PRATIQUE')`)
+    : `<div class="mref"><span class="mref-ic">${ic('book')}</span><span class="mref-t"><small>À revoir dans ton manuel</small><b>Manuel CCA PRATIQUE · page ${esc(pshort(String(q.cref[0].printed)))}</b></span></div>`;
+  return box + q.cref.map(r => `<div class="quote"><div class="src">${ic('book')}Manuel p. ${esc(pshort(String(r.printed)))}${manualSection(r.page) ? ' · ' + esc(manualSection(r.page)) : ''}</div>${r.quote ? `<q>${esc(r.quote)}</q>` : ''}</div>`).join('');
 }
 
 // ---------- paramètres : réinitialiser la progression ----------
