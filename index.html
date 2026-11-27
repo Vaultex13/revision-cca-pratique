@@ -600,7 +600,7 @@ function chooser() {
   }).join('') + (G ? card(`openFormation('general');trainSetup(true)`, 'amber', 'target', 'Entraînement général', `Sécurité + secourisme · ${nG} questions · mode révision ou examen`, 'train wide') : '');
   const box = (icn, title, inner) => `<section class="mbox"><h3>${ic(icn)}${title}</h3><div class="mgrid">${inner}</div></section>`;
   const vl = videoList(), vOn = vl.filter(vAvail).length, vSeen = vl.filter(v => (store.v || {})[v.video]).length;
-  const videos = vl.length ? card(`openVideos()`, 'blue', 'pcircle', 'Vidéothèque', `${vl.length} vidéos · ${VGROUPS.length} thèmes${vOn < vl.length ? ` · ${vOn} en ligne` : ''}${vSeen ? ` · ${vSeen} vues` : ''}`, 'wide') : '';
+  const videos = vl.length ? card(`openVideos()`, 'blue', 'pcircle', 'Vidéo', `${vl.length} vidéos · ${VGROUPS.length} thèmes${vOn < vl.length ? ` · ${vOn} en ligne` : ''}${vSeen ? ` · ${vSeen} vues` : ''}`, 'wide') : '';
   app.innerHTML = `<div class="menu">${box('shield', 'Modules', modules)}${box('book', 'Cours', cours)}${box('pcircle', 'Vidéos', videos)}${box('target', 'Entraînement', train)}</div>
     <div class="foot">Usage personnel · contenu Aeroschool · progression enregistrée dans ce navigateur</div>`;
   scrollTo(0, 0);
@@ -729,7 +729,7 @@ function localPlayer(file, autoplay) {
   if (LOCAL) return `<div class="video-box"><video controls ${autoplay ? 'autoplay' : ''} preload="metadata" src="videos/${encodeURIComponent(file)}"></video></div>`;
   if (LSTATE === 'ok' && LSET.has(file)) return `<div class="video-box"><video controls ${autoplay ? 'autoplay' : ''} preload="metadata" data-lf="${esc(file)}"></video></div>`;
   if (LSTATE === 'prompt') return `<div class="desc">Vidéo disponible sur ce PC : <button class="btn primary" onclick="lLink()">Réactiver l'accès au dossier vidéos</button></div>`;
-  return `<div class="desc">Vidéo bientôt disponible.${FSA ? ' Sur ce PC, tu peux relier le dossier vidéos depuis la Vidéothèque.' : ''}</div>`;
+  return `<div class="desc">Vidéo bientôt disponible.${FSA ? ' Sur ce PC, tu peux relier le dossier vidéos depuis la page Vidéo.' : ''}</div>`;
 }
 const vAvail = v => !!v.youtubeId || LOCAL || (LSTATE === 'ok' && LSET.has(v.video));
 let VF = { f:'all', q:'' }; // filtre de la vidéothèque
@@ -745,7 +745,7 @@ function openVideos(keep) {
   bar.innerHTML = `<header class="hero"><div class="hero-in">
     <div class="brand"><span class="logo">${ic('pcircle')}</span>CCA · Pratique Vidéos
       <button class="back" style="margin-left:auto;font-weight:600" onclick="chooser()">${ic('back')}Menu principal</button></div>
-    <h1>Vidéothèque</h1>
+    <h1>Vidéo</h1>
     <p>${all.length} vidéos rangées par thème · sécurité et secourisme</p>
     <div class="stats">
       <div class="stat"><b>${all.length}</b><span>vidéos</span></div>
