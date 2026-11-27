@@ -800,7 +800,8 @@ function playVideo(file) {
   const list = vFiltered(), all = videoList();
   const v = all.find(x => x.video === file); if (!v) return;
   const seq = list.includes(v) ? list : all, i = seq.indexOf(v), prevV = seq[i - 1], nextV = seq[i + 1];
-  upNextStop(); VNEXT = seq.slice(i + 1).find(vAvail) || null; // lancée automatiquement à la fin (décompte)
+  // lecture auto : vidéo suivante disponible ; après la dernière, on repart du début de la liste
+  upNextStop(); VNEXT = seq.slice(i + 1).find(vAvail) || seq.slice(0, i).find(vAvail) || null;
   const g = VGROUPS.find(x => x.k === v.g);
   if (vAvail(v)) { store.v = store.v || {}; store.v[v.video] = Date.now(); save(); }
   let ov = document.getElementById('vplay');
