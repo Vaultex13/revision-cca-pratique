@@ -452,25 +452,14 @@ button,a,.opt,.step,.action,.mod,.cchap{touch-action:manipulation}
 .vplay-body .nav .btn{max-width:48%;min-width:0}
 .vplay-body .nav .btn .hide-sm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .show-sm{display:none}
-/* encadré « Vidéo suivante » (fin de vidéo) */
+/* bouton « Lecture auto » (enchaîne les vidéos) */
 .video-box{position:relative}
-.upnext{position:absolute;right:14px;bottom:14px;z-index:5;display:flex;align-items:center;gap:12px;width:min(420px,calc(100% - 28px));padding:10px 12px;border-radius:14px;
-  background:rgba(10,16,28,.72);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,.22);
-  box-shadow:0 12px 34px rgba(0,0,0,.45);color:#fff;overflow:hidden;animation:upin .35s ease}
-@keyframes upin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.upthumb{flex:none;width:96px;aspect-ratio:16/9;border-radius:8px;overflow:hidden;background:#0f2a57 url(media/thumb-plane.svg) center/cover}
-.upthumb img{width:100%;height:100%;object-fit:cover;display:block}
-.uptxt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.uptxt small{font-size:12px;color:var(--mute)}.uptxt small b{color:#fff}
-.uptxt>b{font-size:14px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.upnext .btn{flex:none;padding:7px 12px;font-size:13.5px}
-.upx{position:absolute;top:4px;right:4px;width:24px;height:24px;border:0;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;display:grid;place-items:center;cursor:pointer}
-.upx svg.i{width:13px;height:13px}
-.upnext{padding-right:34px}
-.upbar{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.12)}
-.upbar i{display:block;height:100%;background:var(--brand2);transform-origin:left;animation:upbar linear forwards}
-@keyframes upbar{from{transform:scaleX(1)}to{transform:scaleX(0)}}
-@media (max-width:600px){.upnext{right:8px;bottom:8px;width:calc(100% - 16px);gap:8px;padding:8px 32px 8px 8px}.upthumb{width:64px}.uptxt>b{font-size:13px}}
+.autobtn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:13.5px;font-weight:650;color:var(--ink);cursor:pointer;padding:7px 12px 7px 8px;border-radius:99px;border:1px solid rgba(255,255,255,.16);background:var(--glass2);flex:none}
+.vmeta .autobtn{margin-left:auto;padding:4px 10px 4px 6px;font-size:12.5px}
+.autobtn .sw{position:relative;width:30px;height:17px;border-radius:99px;background:rgba(255,255,255,.22);transition:background .2s}
+.autobtn .sw::after{content:"";position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:#fff;transition:transform .2s}
+.autobtn.on{border-color:color-mix(in srgb,var(--brand2) 60%,transparent);background:color-mix(in srgb,var(--brand2) 22%,transparent)}
+.autobtn.on .sw{background:var(--brand2)}.autobtn.on .sw::after{transform:translateX(13px)}
 .lbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:12px;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--brand2) 16%,rgba(14,20,32,.5));border:1px solid color-mix(in srgb,var(--brand2) 45%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .lbar.ok{background:color-mix(in srgb,var(--ok) 12%,rgba(14,20,32,.5));border-color:color-mix(in srgb,var(--ok) 40%,transparent)}
 .lbar>svg.i{width:22px;height:22px;flex:none;color:var(--brand2)}.lbar.ok>svg.i{color:var(--ok)}
@@ -774,7 +763,7 @@ function openVideos(keep) {
     </div></div></header>`;
   app.innerHTML = `<div class="vbar"><span class="seg" id="vf">${[['all', 'Tout'], ['securite', 'Sécurité'], ['secourisme', 'Secourisme']].map(([k, l]) =>
       `<label><input type="radio" name="vf" value="${k}" ${VF.f === k ? 'checked' : ''}>${l}</label>`).join('')}</span>
-    <input type="search" id="vq" placeholder="Rechercher une vidéo (ex. extincteur, RCP)" value="${esc(VF.q)}" autocomplete="off"></div>
+    <input type="search" id="vq" placeholder="Rechercher une vidéo (ex. extincteur, RCP)" value="${esc(VF.q)}" autocomplete="off">${autoBtn()}</div>
     ${lBar()}<div class="vjump" id="vjump"></div><div id="vlist"></div>
     <div class="foot">Usage personnel · contenu Aeroschool · vidéos non répertoriées</div>`;
   document.querySelectorAll('#vf input').forEach(i => i.onchange = () => { VF.f = i.value; vRender(); });
@@ -822,7 +811,7 @@ function playVideo(file) {
     <div class="cours-head"><span class="cours-t">${ic('play')}${esc(v.vt)}</span>
       <button class="side-x" onclick="closeVideo()" aria-label="Fermer la vidéo">${ic('x')}</button></div>
     <div class="vplay-body">${player}
-      <div class="vmeta">${g ? `<span class="chip">${esc(g.t)}</span>` : ''}<span class="chip">${esc(v.modName)}</span></div>
+      <div class="vmeta">${g ? `<span class="chip">${esc(g.t)}</span>` : ''}<span class="chip">${esc(v.modName)}</span>${autoBtn()}</div>
       ${v.description ? `<div class="desc">${v.description}</div>` : ''}
       ${coursRefs(v, v.mod)}
       <div class="nav">${prevV ? `<button class="btn" onclick="playVideo('${prevV.video}')">${ic('back')}<span class="hide-sm">${esc(prevV.vt)}</span><span class="show-sm">Précédente</span></button>` : '<span></span>'}
@@ -858,20 +847,18 @@ addEventListener('message', e => {
     }
   }
 });
+// lecture automatique (bouton on/off, mémorisé) : à la fin d'une vidéo, la suivante se lance aussitôt
+const autoOn = () => !!store.autoplay;
 function upNextShow() {
-  if (UPDONE || !VNEXT) return; UPDONE = true;
-  const box = document.querySelector('#vplay .yt-box, #vplay .video-box'); if (!box) return;
-  const n = VNEXT, SEC = 10; let left = SEC;
-  box.insertAdjacentHTML('beforeend', `<div class="upnext" id="upnext" role="status">
-    <button class="upx" onclick="upNextCancel()" aria-label="Annuler la vidéo suivante">${ic('x')}</button>
-    <span class="upthumb">${n.youtubeId ? `<img src="https://i.ytimg.com/vi/${n.youtubeId}/mqdefault.jpg" alt="">` : ''}</span>
-    <span class="uptxt"><small>Vidéo suivante dans <b id="upsec">${SEC}</b> s</small><b>${esc(n.vt)}</b></span>
-    <button class="btn primary" onclick="playVideo('${n.video}')">${ic('play')}Lire</button>
-    <span class="upbar"><i style="animation-duration:${SEC}s"></i></span></div>`);
-  UPT = setInterval(() => { left--; const s = document.getElementById('upsec'); if (s) s.textContent = left; if (left <= 0) { upNextStop(); playVideo(n.video); } }, 1000);
+  if (UPDONE || !VNEXT || !autoOn()) return; UPDONE = true;
+  playVideo(VNEXT.video);
 }
-function upNextStop() { clearInterval(UPT); UPT = null; const u = document.getElementById('upnext'); if (u) u.remove(); }
-function upNextCancel() { upNextStop(); }
+function upNextStop() {}
+function toggleAuto() {
+  store.autoplay = !autoOn(); save();
+  document.querySelectorAll('.autobtn').forEach(b => { b.classList.toggle('on', autoOn()); b.setAttribute('aria-pressed', autoOn()); });
+}
+const autoBtn = () => `<button class="autobtn ${autoOn() ? 'on' : ''}" aria-pressed="${autoOn()}" onclick="toggleAuto()" title="Enchaîner automatiquement les vidéos"><span class="sw"></span>Lecture auto</button>`;
 function closeVideo() {
   upNextStop();
   const ov = document.getElementById('vplay'); if (ov) ov.remove(); freeLocal();
