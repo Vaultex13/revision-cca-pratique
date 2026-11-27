@@ -594,7 +594,7 @@ function screenKey() {
 function saveScroll() { const k = screenKey(); if (k) SCROLL[k] = scrollY; }
 addEventListener('scroll', saveScroll, { passive: true });
 addEventListener('click', saveScroll, true); // avant que le clic change d'écran
-function restoreScroll(k) { const y = SCROLL[k] || 0; scrollTo(0, y); requestAnimationFrame(() => scrollTo(0, y)); }
+function restoreScroll(k) { scrollTo(0, SCROLL[k] || 0); }
 function chooser() {
   S = null; setFormation(null);
   if (typeof dropTrap === 'function' && !POP) dropTrap();
