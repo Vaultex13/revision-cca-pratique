@@ -832,9 +832,9 @@ function playVideo(file) {
   watchEnd(ov);
 }
 // ----- « Vidéo suivante » façon Netflix : à la fin d'une vidéo, encadré avec décompte de 10 s (✕ pour annuler) -----
-let VNEXT = null, UPT = null, UPDONE = false;
+let VNEXT = null, UPT = null, UPDONE = false, VDUR = 0, VLAST = 0;
 function watchEnd(ov) {
-  UPDONE = false;
+  UPDONE = false; VDUR = 0; VLAST = 0;
   const fr = ov.querySelector('#vyt');
   if (fr) fr.addEventListener('load', () => { // API YouTube par messages : on demande à être prévenu des changements d'état
     const w = fr.contentWindow;
@@ -847,7 +847,16 @@ addEventListener('message', e => {
   if (!/^https:\/\/www\.youtube(-nocookie)?\.com$/.test(e.origin || '')) return;
   let d; try { d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch (x) { return; }
   if (!d || !document.getElementById('vplay')) return;
-  if ((d.event === 'onStateChange' && d.info === 0) || (d.event === 'infoDelivery' && d.info && d.info.playerState === 0)) upNextShow();
+  if ((d.event === 'onStateChange' && d.info === 0) || (d.event === 'infoDelivery' && d.info && d.info.playerState === 0)) return upNextShow();
+  // les Shorts tournent en boucle sans état « terminé » : fin = dernière seconde atteinte, ou retour au début après la fin
+  if (d.event === 'infoDelivery' && d.info) {
+    if (d.info.duration) VDUR = d.info.duration;
+    const t = d.info.currentTime;
+    if (typeof t === 'number' && VDUR > 3) {
+      if (t >= VDUR - 0.8 || (VLAST > VDUR - 2.5 && t < 2)) upNextShow();
+      VLAST = t;
+    }
+  }
 });
 function upNextShow() {
   if (UPDONE || !VNEXT) return; UPDONE = true;
