@@ -821,7 +821,7 @@ function playVideo(file) {
   const g = VGROUPS.find(x => x.k === v.g);
   if (vAvail(v)) { store.v = store.v || {}; store.v[v.video] = Date.now(); save(); }
   let ov = document.getElementById('vplay');
-  if (!ov) { ov = document.createElement('div'); ov.id = 'vplay'; ov.className = 'cours-ov'; ov.onclick = e => { if (e.target === ov) closeVideo(); }; document.body.appendChild(ov); }
+  if (!ov) { ov = document.createElement('div'); ov.id = 'vplay'; ov.className = 'cours-ov'; /* clic hors du lecteur : rien (seule la croix ferme la vidéo) */ document.body.appendChild(ov); }
   const player = v.youtubeId
     ? `<div class="yt-box"><iframe src="https://www.youtube-nocookie.com/embed/${v.youtubeId}?autoplay=1&rel=0&enablejsapi=1&origin=${encodeURIComponent(location.origin)}" id="vyt" title="${esc(v.vt)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`
     : localPlayer(v.video, true);
@@ -1458,7 +1458,7 @@ addEventListener('resize', () => { if (S) document.documentElement.style.setProp
 document.addEventListener('keydown', e => {
   if (document.getElementById('quitbox')) { if (e.key === 'Escape') { e.preventDefault(); closeQuit(); } return; }
   if (CV) { if (e.key === 'Escape') closeCours(); return; }
-  if (document.getElementById('vplay')) { if (e.key === 'Escape') closeVideo(); return; }
+  if (document.getElementById('vplay')) return; // pendant une vidéo, seule la croix la ferme
   if (!S || e.key !== 'Enter' || e.target.tagName === 'SELECT' || app.querySelector('.result')) return;
   const b = document.getElementById('check'); if (b) b.click(); else { const c = app.querySelector('.nav .primary'); c && c.click(); }
 });
