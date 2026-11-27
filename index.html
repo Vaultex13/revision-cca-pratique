@@ -1227,6 +1227,20 @@ function askQuit() {
   const no = document.getElementById('quit-no'); no.onclick = closeQuit; no.focus();
 }
 function closeQuit() { const b = document.getElementById('quitbox'); if (b) b.remove(); }
+// bouton retour du téléphone pendant une vidéo : même confirmation que pour les QCM
+function askQuitVideo() {
+  if (document.getElementById('quitbox')) return;
+  const box = document.createElement('div');
+  box.id = 'quitbox'; box.className = 'quit-ov';
+  box.innerHTML = `<div class="quit-card" role="alertdialog" aria-modal="true" aria-labelledby="quit-t">
+    <span class="ic red">${ic('play')}</span>
+    <h3 id="quit-t">Quitter la vidéo ?</h3>
+    <p>Es-tu sûr de vouloir quitter la vidéo ? Tu reviendras à la liste des vidéos.</p>
+    <div class="quit-btns"><button class="btn" id="quit-no">${ic('play')}Non, continuer</button><button class="btn danger" onclick="closeQuit();closeVideo()">${ic('back')}Oui, quitter</button></div></div>`;
+  box.addEventListener('click', e => { if (e.target === box) closeQuit(); });
+  document.body.appendChild(box);
+  const no = document.getElementById('quit-no'); no.onclick = closeQuit; no.focus();
+}
 function quitNow() { closeQuit(); closeCours(); S = null; chooser(); }
 
 // bouton « Continuer » du haut, comme sur le site : valide la question ou passe à l'étape suivante
@@ -1441,7 +1455,7 @@ const atRoot = () => !S && !FK && !document.getElementById('vlist') && !document
 function navTrap() { if (!atRoot() && !(history.state && history.state.trap)) history.pushState({ trap: 1 }, '', location.href); }
 function appBack() {
   if (document.getElementById('quitbox')) return closeQuit();
-  if (document.getElementById('vplay')) return closeVideo();
+  if (document.getElementById('vplay')) return askQuitVideo();
   if (CV) return closeCours();
   if (S && S.i < S.items.length) return askQuit();
   if (S) { S = null; return FK ? home() : chooser(); }
