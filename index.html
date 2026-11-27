@@ -501,7 +501,7 @@ let FK = null, F = null, DATA = null, MOD_IC = {};
 function setFormation(k) {
   FK = k; F = k && FORMATIONS[k];
   DATA = F ? F.data : null; MOD_IC = F ? F.icons : {};
-  if (location.hash !== '#' + (k || '')) history.replaceState(null, '', k ? '#' + k : location.pathname);
+  if (location.hash !== '#' + (k || '')) history.replaceState(history.state, '', k ? '#' + k : location.pathname);
 }
 const app = document.getElementById('app'), bar = document.getElementById('bar'), side = document.getElementById('side');
 const QTYPES = ['mcq','truefalse','match','order','hotspot'];
@@ -583,6 +583,7 @@ const isMistake = sid => store.q[sid] && store.q[sid].last === false;
 // ---------- écran d'entrée : choix de la formation ----------
 function chooser() {
   S = null; setFormation(null);
+  if (typeof dropTrap === 'function' && !POP) dropTrap();
   app.className = '';
   document.body.classList.remove('session');
   side.innerHTML = '';
@@ -745,7 +746,7 @@ function openVideos(keep) {
   const y = scrollY;
   S = null; setFormation(null);
   DATA = FORMATIONS.general ? FORMATIONS.general.data : null; // pour les renvois au cours (noms des modules)
-  history.replaceState(null, '', '#videos');
+  history.replaceState(history.state, '', '#videos');
   app.className = '';
   document.body.classList.remove('session');
   side.innerHTML = '';
@@ -834,6 +835,7 @@ function watchEnd(ov) {
 }
 addEventListener('message', e => {
   if (!/^https:\/\/www\.youtube(-nocookie)?\.com$/.test(e.origin || '')) return;
+  const fr = document.getElementById('vyt'); if (!fr || e.source !== fr.contentWindow) return; // messages d'un ancien lecteur : ignorés
   let d; try { d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch (x) { return; }
   if (!d || !document.getElementById('vplay')) return;
   if ((d.event === 'onStateChange' && d.info === 0) || (d.event === 'infoDelivery' && d.info && d.info.playerState === 0)) return upNextShow();
@@ -1430,10 +1432,37 @@ document.addEventListener('keydown', e => {
   const b = document.getElementById('check'); if (b) b.click(); else { const c = app.querySelector('.nav .primary'); c && c.click(); }
 });
 // #securite / #secourisme dans l'adresse : on rouvre directement la formation (rafraîchissement, favori)
+// ----- bouton « retour » du téléphone / du navigateur (appli raccourci) -----
+// Hors du menu principal, on garde une entrée d'historique « piège » : le retour remonte d'un niveau dans le site
+// (fermer la vidéo / le cours, confirmer avant de quitter un quiz, revenir au module puis au menu) au lieu de fermer l'appli.
+let POP = false;
+const atRoot = () => !S && !FK && !document.getElementById('vlist') && !document.getElementById('vplay') && !CV && !document.getElementById('quitbox');
+function navTrap() { if (!atRoot() && !(history.state && history.state.trap)) history.pushState({ trap: 1 }, '', location.href); }
+function appBack() {
+  if (document.getElementById('quitbox')) return closeQuit();
+  if (document.getElementById('vplay')) return closeVideo();
+  if (CV) return closeCours();
+  if (S && S.i < S.items.length) return askQuit();
+  if (S) { S = null; return FK ? home() : chooser(); }
+  if (FK && !app.querySelector('.mod')) return home(); // paramètres / réglages d'entraînement → accueil du module
+  if (FK || document.getElementById('vlist')) return chooser();
+}
+addEventListener('popstate', () => {
+  POP = true; setTimeout(() => { POP = false; }, 300);
+  appBack();
+  if (!atRoot()) history.pushState({ trap: 1 }, '', location.href);
+  else if (location.hash) history.replaceState(null, '', location.pathname);
+});
+// retour au menu par un bouton du site : on retire le piège pour qu'un seul « retour » ferme ensuite l'appli
+function dropTrap() { if (history.state && history.state.trap) { POP = true; setTimeout(() => { POP = false; }, 300); history.back(); } }
+// le site change d'écran (clics) : on pose le piège dès qu'on quitte le menu principal
+new MutationObserver(() => { if (!POP) navTrap(); }).observe(document.body, { childList: true });
+new MutationObserver(() => { if (!POP) navTrap(); }).observe(app, { childList: true });
+addEventListener('hashchange', () => { if (POP) return; const k = location.hash.slice(1); if (k === 'videos') { if (!document.getElementById('vlist')) openVideos(); return; } if (k !== (FK || '')) { if (FORMATIONS[k] && FORMATIONS[k].data) openFormation(k); else chooser(); } });
 const startKey = location.hash.slice(1);
 if (startKey === 'videos') openVideos(); else if (FORMATIONS[startKey] && FORMATIONS[startKey].data) openFormation(startKey); else chooser();
 lInit();
-addEventListener('hashchange', () => { const k = location.hash.slice(1); if (k === 'videos') { if (!document.getElementById('vlist')) openVideos(); return; } if (k !== (FK || '')) { if (FORMATIONS[k] && FORMATIONS[k].data) openFormation(k); else chooser(); } });
+navTrap();
 </script>
 <script>
 // Appuis accidentels au défilement (téléphone) : un toucher qui arrête un défilement en cours, ou un doigt qui a
