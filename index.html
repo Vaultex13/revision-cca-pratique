@@ -591,7 +591,9 @@ function screenKey() {
   if (!FK && app.querySelector('.menu')) return 'menu';
   return null;
 }
-addEventListener('scroll', () => { const k = screenKey(); if (k) SCROLL[k] = scrollY; }, { passive: true });
+function saveScroll() { const k = screenKey(); if (k) SCROLL[k] = scrollY; }
+addEventListener('scroll', saveScroll, { passive: true });
+addEventListener('click', saveScroll, true); // avant que le clic change d'écran
 function restoreScroll(k) { const y = SCROLL[k] || 0; scrollTo(0, y); requestAnimationFrame(() => scrollTo(0, y)); }
 function chooser() {
   S = null; setFormation(null);
@@ -1475,6 +1477,7 @@ function appBack() {
   if (FK || document.getElementById('vlist')) return chooser();
 }
 addEventListener('popstate', () => {
+  saveScroll();
   POP = true; setTimeout(() => { POP = false; }, 300);
   appBack();
   if (!atRoot()) history.pushState({ trap: 1 }, '', location.href);
