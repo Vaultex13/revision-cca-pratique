@@ -581,6 +581,18 @@ function record(sid, ok) {
 const isMistake = sid => store.q[sid] && store.q[sid].last === false;
 
 // ---------- écran d'entrée : choix de la formation ----------
+// ----- position de défilement gardée par écran (menu, accueil d'un module, liste des vidéos) : un retour y ramène -----
+const SCROLL = {};
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+function screenKey() {
+  if (S || document.getElementById('vplay') || CV || document.body.classList.contains('cours-open')) return null;
+  if (document.getElementById('vlist')) return 'videos';
+  if (FK && app.querySelector('.mod')) return 'home:' + FK;
+  if (!FK && app.querySelector('.menu')) return 'menu';
+  return null;
+}
+addEventListener('scroll', () => { const k = screenKey(); if (k) SCROLL[k] = scrollY; }, { passive: true });
+function restoreScroll(k) { const y = SCROLL[k] || 0; scrollTo(0, y); requestAnimationFrame(() => scrollTo(0, y)); }
 function chooser() {
   S = null; setFormation(null);
   if (typeof dropTrap === 'function' && !POP) dropTrap();
@@ -612,9 +624,9 @@ function chooser() {
   const videos = vl.length ? card(`openVideos()`, 'blue', 'pcircle', 'Vidéo', `${vl.length} vidéos · ${VGROUPS.length} thèmes${vOn < vl.length ? ` · ${vOn} en ligne` : ''}${vSeen ? ` · ${vSeen} vues` : ''}`, 'wide') : '';
   app.innerHTML = `<div class="menu">${box('shield', 'Modules', modules)}${box('book', 'Cours', cours)}${box('pcircle', 'Vidéos', videos)}${box('target', 'Entraînement', train)}</div>
     <div class="foot">Usage personnel · contenu Aeroschool · progression enregistrée dans ce navigateur</div>`;
-  scrollTo(0, 0);
+  restoreScroll('menu');
 }
-function openFormation(k) { setFormation(k); home(); }
+function openFormation(k) { if (!POP) delete SCROLL['home:' + k]; setFormation(k); home(); } // ouvert depuis le menu : en haut ; en revenant : à la même position
 
 // ---------- vidéothèque : toutes les vidéos des deux formations, rangées par thème ----------
 // Sécurité : par équipement (modules regroupés) ; secourisme : par geste (d'après le titre, les modules mélangent les thèmes)
@@ -743,7 +755,7 @@ function localPlayer(file, autoplay) {
 const vAvail = v => !!v.youtubeId || LOCAL || (LSTATE === 'ok' && LSET.has(v.video));
 let VF = { f:'all', q:'' }; // filtre de la vidéothèque
 function openVideos(keep) {
-  const y = scrollY;
+  const y = scrollY; if (!keep && !POP) delete SCROLL.videos; // ouverte depuis le menu : en haut
   S = null; setFormation(null);
   DATA = FORMATIONS.general ? FORMATIONS.general.data : null; // pour les renvois au cours (noms des modules)
   history.replaceState(history.state, '', '#videos');
@@ -770,7 +782,7 @@ function openVideos(keep) {
   document.querySelectorAll('#vf input').forEach(i => i.onchange = () => { VF.f = i.value; vRender(); });
   const q = document.getElementById('vq'); q.oninput = () => { VF.q = q.value; vRender(); };
   vRender();
-  scrollTo(0, keep ? y : 0);
+  keep ? scrollTo(0, y) : restoreScroll('videos');
 }
 const vNorm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 function vFiltered() {
@@ -866,7 +878,7 @@ function closeVideo() {
   upNextStop();
   const ov = document.getElementById('vplay'); if (ov) ov.remove(); freeLocal();
   if (!CV) document.body.classList.remove('cours-open');
-  if (document.getElementById('vlist')) vRender(); // pastilles « Vue » à jour
+  if (document.getElementById('vlist')) { vRender(); restoreScroll('videos'); } // pastilles « Vue » à jour, même position
 }
 
 // ---------- accueil d'une formation ----------
@@ -912,7 +924,7 @@ function home() {
         ${errs ? `<button class="btn" title="Refaire mes erreurs" onclick="startQuiz(${m.id},true)">${ic('redo')}</button>` : ''}</div></div>`;
   }
   app.innerHTML = h + `</div><div class="foot">Usage personnel · contenu Aeroschool · progression enregistrée dans ce navigateur</div>`;
-  scrollTo(0, 0);
+  restoreScroll('home:' + FK);
 }
 // ---------- cours : manuel, fiches récap, fiches de révision (cours.js) ----------
 const COURS = window.COURS || null;
